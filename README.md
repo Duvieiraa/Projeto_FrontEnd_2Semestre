@@ -6,7 +6,7 @@ Aplicação web interativa para gestão de receitas, despesas e planejamento or�
 
 ## 📌 1. Visão Geral do Projeto
 
-O **Finanças Pessoais** é um sistema web moderno do tipo Single Page Application (SPA), concebido com foco na facilidade de uso, clareza visual e independência tecnológica. Inspirado nas melhores interfaces de fintechs e dashboards SaaS atuais, a aplicação permite o gerenciamento completo de fluxos monetários com atualização dinâmica e em tempo real.
+O **Finanças Pessoais** é um sistema web moderno, concebido com foco na facilidade de uso, clareza visual e independência tecnológica. Inspirado nas melhores interfaces de fintechs e dashboards SaaS atuais, a aplicação permite o gerenciamento completo de fluxos monetários com atualização dinâmica e em tempo real.
 
 ### 🎯 Objetivo Acadêmico
 Demonstrar o domínio prático dos fundamentos essenciais de desenvolvimento Front-End:
@@ -34,12 +34,6 @@ Demonstrar o domínio prático dos fundamentos essenciais de desenvolvimento Fro
   - Métodos funcionais de Arrays (`filter`, `map`, `reduce`, `find`, `sort`, `slice`, `splice`).
   - Gráficos desenhados via Canvas API 2D nativa com suporte a High-DPI/Retina Display.
 
-### 🚫 Restrições Acadêmicas Respeitadas
-- ❌ Nenhum framework JavaScript (React, Vue, Angular, etc.).
-- ❌ Nenhum framework CSS (Bootstrap, Tailwind CSS, etc.).
-- ❌ Nenhuma biblioteca gráfica externa (Chart.js, ApexCharts, etc.).
-- ❌ Nenhuma persistência em navegador (`localStorage`, `sessionStorage`, `IndexedDB` ou Cookies).
-- ❌ Nenhum backend ou banco de dados externo.
 
 ---
 
