@@ -22,7 +22,7 @@
          ========================================================= -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-brand">
-        <div class="brand-icone" aria-hidden="true">FP</div>
+        <div class="brand-icone" aria-hidden="true">$</div>
         <div class="brand-textos">
           <span class="brand-nome">Finanças</span>
           <span class="brand-sub">Controle Pessoal</span>
@@ -193,17 +193,17 @@
             </div>
           </div>
 
-          <!-- Gráficos Principais (Canvas Nativo) -->
+          <!-- Painéis Principais com Dados Reais das Movimentações -->
           <div class="grid-graficos">
             <div class="card-grafico">
               <div class="card-grafico-cabecalho">
                 <div>
                   <h3 class="grafico-titulo">Receitas vs Despesas</h3>
-                  <span class="grafico-subtitulo">Comparativo direto de entradas e saídas</span>
+                  <span class="grafico-subtitulo">Comparativo direto de entradas e saídas reais</span>
                 </div>
               </div>
-              <div class="canvas-container">
-                <canvas id="grafico-comparativo"></canvas>
+              <div id="painel-comparativo-dados">
+                <!-- Renderizado dinamicamente via dashboard.js com dados reais -->
               </div>
             </div>
 
@@ -211,27 +211,26 @@
               <div class="card-grafico-cabecalho">
                 <div>
                   <h3 class="grafico-titulo">Despesas por Categoria</h3>
-                  <span class="grafico-subtitulo">Distribuição proporcional de gastos</span>
+                  <span class="grafico-subtitulo">Distribuição proporcional de gastos reais</span>
                 </div>
               </div>
-              <div class="canvas-container container-rosca-legenda">
-                <canvas id="grafico-categorias"></canvas>
-                <div class="legenda-categorias" id="legenda-grafico-categorias"></div>
+              <div id="painel-categorias-dados">
+                <!-- Renderizado dinamicamente via dashboard.js com dados reais -->
               </div>
             </div>
           </div>
 
-          <!-- Gráfico Secundário e Recentes -->
+          <!-- Fluxo Mensal e Transações Recentes -->
           <div class="grid-graficos-secundario">
             <div class="card-grafico">
               <div class="card-grafico-cabecalho">
                 <div>
                   <h3 class="grafico-titulo">Evolução Mensal</h3>
-                  <span class="grafico-subtitulo">Histórico das movimentações registradas</span>
+                  <span class="grafico-subtitulo">Balanço consolidado das movimentações</span>
                 </div>
               </div>
-              <div class="canvas-container">
-                <canvas id="grafico-evolucao"></canvas>
+              <div id="painel-evolucao-dados">
+                <!-- Renderizado dinamicamente via dashboard.js com dados reais -->
               </div>
             </div>
 

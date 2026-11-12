@@ -118,11 +118,11 @@
 }
 
 /* -------------------------------------------------------------
- * 2. GRÁFICOS NATIVOS E WRAPPERS
+ * 2. PAINÉIS DE DADOS REAIS (SUBSTITUINDO IMAGENS/CANVAS)
  * ------------------------------------------------------------- */
 .grid-graficos {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1.3fr 1fr;
   gap: 20px;
   margin-bottom: 28px;
 }
@@ -162,35 +162,214 @@
   color: var(--text-muted);
 }
 
-.canvas-container {
+/* Painel Real: Receitas vs Despesas */
+.painel-comparativo-real {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
   width: 100%;
-  position: relative;
-  flex: 1;
-  min-height: 250px;
+}
+
+.barra-proporcional-dupla {
   display: flex;
+  width: 100%;
+  height: 14px;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  background-color: var(--border-subtle);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+}
+
+.segmento-barra-receita {
+  background-color: var(--color-receita);
+  transition: width 0.4s ease;
+}
+
+.segmento-barra-despesa {
+  background-color: var(--color-despesa);
+  transition: width 0.4s ease;
+}
+
+.legenda-barra-dupla {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.grid-comparativo-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.card-mini-comparativo {
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card-mini-comparativo.receita {
+  background-color: var(--color-receita-bg);
+  border-color: #bbf0d6;
+}
+
+.card-mini-comparativo.despesa {
+  background-color: var(--color-despesa-bg);
+  border-color: #fed7d7;
+}
+
+.mini-cabecalho {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
-canvas {
-  width: 100% !important;
-  height: 100% !important;
-  display: block;
+.mini-valor {
+  font-size: 1.35rem;
+  font-weight: 800;
 }
 
-.container-rosca-legenda {
+.mini-info-adicional {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.linha-resumo-balanco {
+  background-color: var(--bg-sidebar);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+/* Painel Real: Despesas por Categoria */
+.painel-categorias-real {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
-
-.legenda-categorias {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-height: 200px;
+  gap: 14px;
+  max-height: 380px;
   overflow-y: auto;
   padding-right: 4px;
+}
+
+.item-categoria-real {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-sidebar);
+  border: 1px solid var(--border-subtle);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.item-categoria-real:hover {
+  background-color: #f0f4f2;
+}
+
+.item-categoria-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item-categoria-nome-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.categoria-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.item-categoria-nome {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.item-categoria-valor-wrapper {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.item-categoria-valor {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.item-categoria-pct {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.item-categoria-trilha {
+  width: 100%;
+  height: 6px;
+  background-color: var(--border-color);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.item-categoria-progresso {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  transition: width 0.4s ease;
+}
+
+.item-categoria-rodape {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* Painel Real: Resumo Mensal / Evolução */
+.painel-evolucao-real {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.item-mes-real {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background-color: var(--bg-sidebar);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.mes-nome {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.mes-detalhes {
+  display: flex;
+  gap: 16px;
+  font-size: 0.82rem;
 }
 
 .legenda-item {

@@ -231,10 +231,9 @@ function inicializarModulos() {
     kpiDespesas: document.getElementById('kpi-despesas-valor'),
     kpiResultado: document.getElementById('kpi-resultado-valor'),
     kpiTaxaPoupanca: document.getElementById('kpi-taxa-poupanca'),
-    canvasComparativo: document.getElementById('grafico-comparativo'),
-    canvasCategorias: document.getElementById('grafico-categorias'),
-    legendaCategorias: document.getElementById('legenda-grafico-categorias'),
-    canvasEvolucao: document.getElementById('grafico-evolucao'),
+    containerComparativo: document.getElementById('painel-comparativo-dados'),
+    containerCategorias: document.getElementById('painel-categorias-dados'),
+    containerEvolucao: document.getElementById('painel-evolucao-dados'),
     containerRecentes: document.getElementById('lista-recentes-dashboard')
   });
 
