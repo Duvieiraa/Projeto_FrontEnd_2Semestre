@@ -141,17 +141,6 @@ npx serve .
 
 ---
 
-## 👥 6. Integrantes do Grupo
-
-| Nome | R.A. / Matrícula | Função Principal |
-| :--- | :--- | :--- |
-| **Alex Reed** (Exemplo) | 00000000 | Estrutura HTML5 & CSS3 |
-| *[Nome do Aluno]* | *[Matrícula]* | Lógica JavaScript & DOM |
-| *[Nome do Aluno]* | *[Matrícula]* | Gráficos Canvas & Planejamento |
-| *[Nome do Aluno]* | *[Matrícula]* | Validações & Documentação |
-
----
-
 ## 📄 7. Licença e Considerações Acadêmicas
 
 Projeto desenvolvido para fins estritamente educacionais como parte dos requisitos de avaliação da disciplina de Front-End no curso de Análise e Desenvolvimento de Sistemas. Todos os dados financeiros apresentados são fictícios e destinados à demonstração técnica.
