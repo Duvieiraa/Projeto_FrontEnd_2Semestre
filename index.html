@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Finanças Pessoais - Dashboard financeiro interativo para controle de receitas, despesas e planejamento pessoal.">
+  <title>Finanças Pessoais — Dashboard Financeiro</title>
+
+  <!-- Estilos CSS Modulares -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Overlay para fechar a gaveta mobile -->
+  <div id="overlay-sidebar" class="overlay-sidebar"></div>
+
+  <div class="app-layout">
+    <!-- =========================================================
+         SIDEBAR DE NAVEGAÇÃO LATERAL
+         ========================================================= -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icone" aria-hidden="true">FP</div>
+        <div class="brand-textos">
+          <span class="brand-nome">Finanças</span>
+          <span class="brand-sub">Controle Pessoal</span>
+        </div>
+      </div>
+
+      <div class="sidebar-usuario">
+        <div class="usuario-avatar" aria-hidden="true">AR</div>
+        <div class="usuario-info">
+          <span class="usuario-nome">Alex Reed</span>
+          <span class="usuario-tipo">Conta Pessoal</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Navegação Principal">
+        <span class="nav-grupo-label">Navegação</span>
+        
+        <a href="#visao-geral" class="nav-link ativo" data-secao="visao-geral">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          Visão Geral
+        </a>
+
+        <a href="#movimentacoes" class="nav-link" data-secao="movimentacoes">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <polyline points="19 12 12 19 5 12"></polyline>
+          </svg>
+          Movimentações
+        </a>
+
+        <a href="#planejamento" class="nav-link" data-secao="planejamento">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          Planejamento
+        </a>
+
+        <a href="#relatorios" class="nav-link" data-secao="relatorios">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          Relatórios
+        </a>
+      </nav>
+
+      <div class="sidebar-rodape">
+        <div class="status-sistema">
+          <span class="status-dot"></span>
+          <span>Dados em Memória (Ativo)</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- =========================================================
+         ÁREA PRINCIPAL DE CONTEÚDO
+         ========================================================= -->
+    <div class="main-conteudo">
+      <!-- CABEÇALHO GLOBAL -->
+      <header class="app-header">
+        <div class="header-esquerda">
+          <button type="button" class="btn-hamburguer" id="btn-hamburguer" aria-label="Abrir Menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <div class="header-titulos">
+            <h1 class="header-saudacao" id="texto-saudacao">Olá, Alex!</h1>
+            <span class="header-data" id="data-atual">Carregando data...</span>
+          </div>
+        </div>
+
+        <div class="header-direita">
+          <button type="button" class="btn btn-primary" id="btn-abrir-modal">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Nova Movimentação</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- CONTEÚDO DAS SEÇÕES (SPA) -->
+      <main class="conteudo-secoes">
+
+        <!-- =======================================================
+             SEÇÃO 1: VISÃO GERAL (DASHBOARD)
+             ======================================================= -->
+        <section id="visao-geral" class="secao-conteudo ativa">
+          <div class="secao-cabecalho">
+            <div>
+              <h2 class="secao-titulo">Visão Geral</h2>
+              <p class="secao-descricao">Acompanhe seus principais indicadores financeiros e fluxo de caixa.</p>
+            </div>
+          </div>
+
+          <!-- 4 Cartões Principais (KPIs) -->
+          <div class="grid-kpis">
+            <div class="card-kpi card-kpi-destaque">
+              <div class="kpi-cabecalho">
+                <span class="kpi-titulo">Saldo Disponível</span>
+                <div class="kpi-icone-wrapper">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                  </svg>
+                </div>
+              </div>
+              <strong class="kpi-valor" id="kpi-saldo-valor">R$ 0,00</strong>
+              <span class="kpi-subtitulo">Balanço líquido atual</span>
+            </div>
+
+            <div class="card-kpi">
+              <div class="kpi-cabecalho">
+                <span class="kpi-titulo">Total de Receitas</span>
+                <div class="kpi-icone-wrapper kpi-icone-receita">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="19" x2="12" y2="5"></line>
+                    <polyline points="5 12 12 5 19 12"></polyline>
+                  </svg>
+                </div>
+              </div>
+              <strong class="kpi-valor texto-sucesso" id="kpi-receitas-valor">R$ 0,00</strong>
+              <span class="kpi-subtitulo">Entradas acumuladas</span>
+            </div>
+
+            <div class="card-kpi">
+              <div class="kpi-cabecalho">
+                <span class="kpi-titulo">Total de Despesas</span>
+                <div class="kpi-icone-wrapper kpi-icone-despesa">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <polyline points="19 12 12 19 5 12"></polyline>
+                  </svg>
+                </div>
+              </div>
+              <strong class="kpi-valor texto-perigo" id="kpi-despesas-valor">R$ 0,00</strong>
+              <span class="kpi-subtitulo">Saídas acumuladas</span>
+            </div>
+
+            <div class="card-kpi">
+              <div class="kpi-cabecalho">
+                <span class="kpi-titulo">Resultado Financeiro</span>
+                <div class="kpi-icone-wrapper">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                  </svg>
+                </div>
+              </div>
+              <strong class="kpi-valor" id="kpi-resultado-valor">R$ 0,00</strong>
+              <span class="kpi-subtitulo">
+                <span class="kpi-badge-poupanca" id="kpi-taxa-poupanca">0% economizado</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Gráficos Principais (Canvas Nativo) -->
+          <div class="grid-graficos">
+            <div class="card-grafico">
+              <div class="card-grafico-cabecalho">
+                <div>
+                  <h3 class="grafico-titulo">Receitas vs Despesas</h3>
+                  <span class="grafico-subtitulo">Comparativo direto de entradas e saídas</span>
+                </div>
+              </div>
+              <div class="canvas-container">
+                <canvas id="grafico-comparativo"></canvas>
+              </div>
+            </div>
+
+            <div class="card-grafico">
+              <div class="card-grafico-cabecalho">
+                <div>
+                  <h3 class="grafico-titulo">Despesas por Categoria</h3>
+                  <span class="grafico-subtitulo">Distribuição proporcional de gastos</span>
+                </div>
+              </div>
+              <div class="canvas-container container-rosca-legenda">
+                <canvas id="grafico-categorias"></canvas>
+                <div class="legenda-categorias" id="legenda-grafico-categorias"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráfico Secundário e Recentes -->
+          <div class="grid-graficos-secundario">
+            <div class="card-grafico">
+              <div class="card-grafico-cabecalho">
+                <div>
+                  <h3 class="grafico-titulo">Evolução Mensal</h3>
+                  <span class="grafico-subtitulo">Histórico das movimentações registradas</span>
+                </div>
+              </div>
+              <div class="canvas-container">
+                <canvas id="grafico-evolucao"></canvas>
+              </div>
+            </div>
+
+            <div class="card-grafico">
+              <div class="card-grafico-cabecalho">
+                <div>
+                  <h3 class="grafico-titulo">Últimas Transações</h3>
+                  <span class="grafico-subtitulo">Registros mais recentes no sistema</span>
+                </div>
+                <a href="#movimentacoes" class="btn btn-secundario btn-sm nav-link" data-secao="movimentacoes">Ver todas</a>
+              </div>
+              <div class="lista-recentes" id="lista-recentes-dashboard">
+                <!-- Preenchido via JavaScript -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =======================================================
+             SEÇÃO 2: MOVIMENTAÇÕES
+             ======================================================= -->
+        <section id="movimentacoes" class="secao-conteudo">
+          <div class="secao-cabecalho">
+            <div>
+              <h2 class="secao-titulo">Movimentações</h2>
+              <p class="secao-descricao">Cadastre, filtre e gerencie suas receitas e despesas.</p>
+            </div>
+          </div>
+
+          <!-- Formulário Embutido de Cadastro Rápido -->
+          <div class="card-grafico" style="margin-bottom: 24px;">
+            <div class="card-grafico-cabecalho">
+              <div>
+                <h3 class="grafico-titulo">Cadastrar Movimentação</h3>
+                <span class="grafico-subtitulo">Preencha os campos para adicionar um novo registro</span>
+              </div>
+            </div>
+
+            <form id="form-cadastro-inline" novalidate>
+              <div class="form-grid-duplo">
+                <div class="form-grupo">
+                  <label class="form-label" for="inline-descricao">Descrição *</label>
+                  <input type="text" id="inline-descricao" name="descricao" class="form-input" placeholder="Ex: Salário, Aluguel, Supermercado..." required>
+                </div>
+
+                <div class="form-grupo">
+                  <label class="form-label" for="inline-valor">Valor (R$) *</label>
+                  <input type="number" id="inline-valor" name="valor" step="0.01" min="0.01" class="form-input" placeholder="0,00" required>
+                </div>
+              </div>
+
+              <div class="form-grid-duplo">
+                <div class="form-grupo">
+                  <label class="form-label" for="inline-tipo">Tipo de Movimentação *</label>
+                  <select id="inline-tipo" name="tipo" class="form-select" required>
+                    <option value="receita">Receita</option>
+                    <option value="despesa">Despesa</option>
+                  </select>
+                </div>
+
+                <div class="form-grupo">
+                  <label class="form-label" for="inline-categoria">Categoria *</label>
+                  <select id="inline-categoria" name="categoria" class="form-select" required>
+                    <!-- Opções dinâmicas via JS -->
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-grupo">
+                <label class="form-label" for="inline-data">Data da Movimentação *</label>
+                <input type="date" id="inline-data" name="data" class="form-input" required>
+              </div>
+
+              <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px;">
+                <button type="reset" class="btn btn-secundario">Limpar</button>
+                <button type="submit" class="btn btn-primary">Adicionar Movimentação</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Barra de Filtros e Tabela -->
+          <div class="card-tabela-movimentacoes">
+            <div class="barra-filtros">
+              <div class="grupo-busca">
+                <span class="icone-busca">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                </span>
+                <input type="text" id="busca-movimentacoes" class="form-input input-busca" placeholder="Pesquisar por descrição...">
+              </div>
+
+              <div class="filtros-controles">
+                <div class="filtro-item">
+                  <select id="filtro-tipo" class="form-select">
+                    <option value="todos">Todos os Tipos</option>
+                    <option value="receita">Apenas Receitas</option>
+                    <option value="despesa">Apenas Despesas</option>
+                  </select>
+                </div>
+
+                <div class="filtro-item">
+                  <select id="filtro-categoria" class="form-select">
+                    <option value="todas">Todas as categorias</option>
+                  </select>
+                </div>
+
+                <div class="filtro-item">
+                  <select id="ordenacao-movimentacoes" class="form-select">
+                    <option value="data-desc">Mais recentes primeiro</option>
+                    <option value="data-asc">Mais antigas primeiro</option>
+                    <option value="valor-desc">Maior valor</option>
+                    <option value="valor-asc">Menor valor</option>
+                  </select>
+                </div>
+
+                <button type="button" class="btn btn-secundario btn-sm" id="btn-limpar-filtros">Limpar Filtros</button>
+              </div>
+            </div>
+
+            <!-- Tabela com listagem dinâmica e segura contra XSS -->
+            <div class="tabela-wrapper">
+              <table class="tabela-financeira">
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Descrição</th>
+                    <th>Categoria</th>
+                    <th>Tipo</th>
+                    <th>Valor</th>
+                    <th style="text-align: right;">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-movimentacoes">
+                  <!-- Gerado via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+
+            <div style="padding: 12px 24px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+              <span id="contador-registros" style="font-size: 0.8rem; color: var(--text-muted);">0 registros</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- =======================================================
+             SEÇÃO 3: PLANEJAMENTO (LIMITES DE GASTOS)
+             ======================================================= -->
+        <section id="planejamento" class="secao-conteudo">
+          <div class="secao-cabecalho">
+            <div>
+              <h2 class="secao-titulo">Planejamento & Orçamento</h2>
+              <p class="secao-descricao">Estabeleça limites de gastos por categoria e acompanhe os alertas visuais de consumo.</p>
+            </div>
+          </div>
+
+          <!-- Resumo Geral do Orçamento -->
+          <div class="grid-planejamento-resumo" id="resumo-planejamento">
+            <!-- Gerado via JavaScript -->
+          </div>
+
+          <!-- Grid de Cartões de Limites por Categoria -->
+          <div class="grid-planejamento-cards" id="grid-planejamento">
+            <!-- Gerado via JavaScript -->
+          </div>
+        </section>
+
+        <!-- =======================================================
+             SEÇÃO 4: RELATÓRIOS
+             ======================================================= -->
+        <section id="relatorios" class="secao-conteudo">
+          <div class="secao-cabecalho">
+            <div>
+              <h2 class="secao-titulo">Relatórios Financeiros</h2>
+              <p class="secao-descricao">Análise consolidada do fluxo financeiro com filtros por período.</p>
+            </div>
+
+            <div style="min-width: 200px;">
+              <select id="filtro-periodo-relatorio" class="form-select">
+                <option value="todos">Todo o período</option>
+                <option value="mes-atual">Mês atual</option>
+                <option value="ultimos-3">Últimos 3 meses</option>
+                <option value="ultimos-6">Últimos 6 meses</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Métricas do Período -->
+          <div class="grid-planejamento-resumo" id="metricas-relatorio" style="margin-bottom: 24px;">
+            <!-- Gerado via JavaScript -->
+          </div>
+
+          <!-- Ranking de Maiores Gastos -->
+          <div class="card-grafico" style="margin-bottom: 24px;">
+            <div class="card-grafico-cabecalho">
+              <div>
+                <h3 class="grafico-titulo">Categorias com Maiores Gastos</h3>
+                <span class="grafico-subtitulo">Top categorias que mais impactaram o orçamento no período</span>
+              </div>
+            </div>
+            <div id="ranking-gastos-relatorio">
+              <!-- Gerado via JavaScript -->
+            </div>
+          </div>
+
+          <!-- Tabela Analítica -->
+          <div class="card-tabela-movimentacoes">
+            <div style="padding: 18px 24px; border-bottom: 1px solid var(--border-color);">
+              <h3 class="grafico-titulo" style="font-size: 1rem;">Detalhamento Analítico por Categoria</h3>
+            </div>
+            <div class="tabela-wrapper">
+              <table class="tabela-financeira">
+                <thead>
+                  <tr>
+                    <th>Categoria</th>
+                    <th>Quantidade de Lançamentos</th>
+                    <th>Total Gasto</th>
+                    <th>% do Total de Despesas</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-relatorios-analitico">
+                  <!-- Gerado via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       MODAL DE NOVA MOVIMENTAÇÃO (Acesso Global)
+       ========================================================= -->
+  <div class="modal-overlay" id="modal-movimentacao" aria-hidden="true" role="dialog" aria-labelledby="titulo-modal">
+    <div class="modal-container">
+      <div class="modal-cabecalho">
+        <h3 class="modal-titulo" id="titulo-modal">Nova Movimentação</h3>
+        <button type="button" class="modal-btn-fechar" id="btn-fechar-modal" aria-label="Fechar Modal">&times;</button>
+      </div>
+
+      <form id="form-modal-movimentacao" novalidate>
+        <div class="modal-corpo">
+          <div class="form-grupo">
+            <label class="form-label" for="modal-descricao">Descrição *</label>
+            <input type="text" id="modal-descricao" name="descricao" class="form-input" placeholder="Ex: Salário, Aluguel, Farmácia..." required>
+          </div>
+
+          <div class="form-grid-duplo">
+            <div class="form-grupo">
+              <label class="form-label" for="modal-valor">Valor (R$) *</label>
+              <input type="number" id="modal-valor" name="valor" step="0.01" min="0.01" class="form-input" placeholder="0,00" required>
+            </div>
+
+            <div class="form-grupo">
+              <label class="form-label" for="modal-tipo">Tipo *</label>
+              <select id="modal-tipo" name="tipo" class="form-select" required>
+                <option value="receita">Receita</option>
+                <option value="despesa">Despesa</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-duplo">
+            <div class="form-grupo">
+              <label class="form-label" for="modal-categoria">Categoria *</label>
+              <select id="modal-categoria" name="categoria" class="form-select" required>
+                <!-- Opções dinâmicas via JS -->
+              </select>
+            </div>
+
+            <div class="form-grupo">
+              <label class="form-label" for="modal-data">Data *</label>
+              <input type="date" id="modal-data" name="data" class="form-input" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-rodape">
+          <button type="button" class="btn btn-secundario" id="btn-cancelar-modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Movimentação</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Container de Notificações Toast -->
+  <div class="toast-container" id="container-toast" aria-live="polite"></div>
+
+  <!-- Script Modular Principal -->
+  <script type="module" src="js/main.js"></script>
+
+  <!-- Aviso amigável caso o usuário/avaliador abra direto pelo arquivo sem servidor local -->
+  <script>
+    if (window.location.protocol === 'file:') {
+      const banner = document.createElement('div');
+      banner.style.cssText = 'background: #fef3c7; color: #92400e; padding: 12px 20px; text-align: center; font-size: 13.5px; border-bottom: 1px solid #f59e0b; position: sticky; top: 0; z-index: 9999; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif; box-shadow: 0 2px 8px rgba(0,0,0,0.06);';
+      banner.innerHTML = '💡 <strong>Dica de execução:</strong> Como este projeto acadêmico utiliza módulos ES6 nativos (<code>import/export</code>), navegadores modernos exigem execução via servidor local para evitar restrições de CORS. Recomendamos abrir com a extensão <strong>Live Server</strong> do VS Code ou executar <code>python -m http.server</code> no terminal.';
+      document.body.prepend(banner);
+    }
+  </script>
+</body>
+</html>

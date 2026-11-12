@@ -1,0 +1,9 @@
+{
+  "name": "financas-pessoais",
+  "version": "1.0.0",
+  "description": "Dashboard de Controle Financeiro Pessoal",
+  "type": "module",
+  "scripts": {
+    "test": "node --check js/data.js"
+  }
+}
