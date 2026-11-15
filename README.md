@@ -6,7 +6,7 @@ O sistema permite registrar entradas e saídas, acompanhar o saldo disponível, 
 
 ---
 
-## 🚀 Principais Funcionalidades
+##  Principais Funcionalidades
 
 - **Visão Geral:** Acompanhe o saldo atual, total de receitas e despesas, além de um comparativo visual do seu orçamento.
 - **Movimentações:** Cadastre receitas e despesas, faça buscas por texto, filtre por tipo ou categoria e ordene por data ou valor.
@@ -26,7 +26,7 @@ O sistema permite registrar entradas e saídas, acompanhar o saldo disponível, 
 
 ---
 
-## 📁 Estrutura de Arquivos
+##  Estrutura de Arquivos
 
 ```text
 Projeto_A2/
@@ -57,7 +57,7 @@ Projeto_A2/
 
 ---
 
-## 💻 Como Usar
+##  Como Usar
 
 Você pode abrir o projeto de duas formas simples:
 
@@ -66,11 +66,7 @@ Você pode abrir o projeto de duas formas simples:
 
 ---
 
-## 👥 Integrantes do Grupo
+## Responsável pelo Projeto
 
 | Nome | Função Principal |
-| :--- | :--- |
 | **Arnaldo** | Estrutura HTML e Telas |
-| *[Nome do Aluno]* | Estilização e Design (CSS) |
-| *[Nome do Aluno]* | Funcionalidades e Cálculos (JS) |
-| *[Nome do Aluno]* | Formulários e Documentação |
