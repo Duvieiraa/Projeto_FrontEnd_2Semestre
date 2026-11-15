@@ -16,7 +16,7 @@ O sistema permite registrar entradas e saídas, acompanhar o saldo disponível, 
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+##  Tecnologias Utilizadas
 
 - **HTML5:** Estrutura das páginas e formulários.
 - **CSS3:** Visual moderno, cores e adaptação para celulares e computadores (responsivo).
