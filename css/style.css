@@ -344,6 +344,14 @@ html, body {
   color: var(--text-main);
 }
 
+.btn-texto-desktop {
+  display: inline;
+}
+
+.btn-texto-mobile {
+  display: none;
+}
+
 /* -------------------------------------------------------------
  * BOTÕES E ELEMENTOS INTERATIVOS
  * ------------------------------------------------------------- */
