@@ -23,6 +23,8 @@ Criar um dashboard interativo que facilite o acompanhamento das finanças pessoa
 
 ## Estrutura do Projeto
 
+## Estrutura do Projeto
+
 ```text
 controle-financeiro/
 │
@@ -42,8 +44,13 @@ controle-financeiro/
 │   ├── planejamento.js
 │   └── relatorios.js
 │
+├── assets/
+│   └── img/
+│       ├── arnaldo.svg
+│       └── logo.svg
 │
 └── README.md
+```
 ```
 
 ## Como Executar
