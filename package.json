@@ -1,8 +1,7 @@
 {
   "name": "financas-pessoais",
   "version": "1.0.0",
-  "description": "Dashboard de Controle Financeiro Pessoal",
-  "type": "module",
+  "description": "Dashboard de Controle Financeiro Pessoal - Trabalho Integrador ADS Front-End",
   "scripts": {
     "test": "node --check js/data.js"
   }

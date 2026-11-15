@@ -1,39 +1,44 @@
-# Finanças Pessoais — Dashboard de Controle Financeiro
+# Finanças Pessoais — Controle Financeiro
 
-Aplicação web para controle de receitas, despesas e planejamento financeiro pessoal, desenvolvida como parte do **Trabalho Integrador do 2º semestre de Análise e Desenvolvimento de Sistemas (ADS)**, na disciplina de Front-End.
+Aplicação web simples e intuitiva para controle financeiro pessoal, desenvolvida para o trabalho integrador do curso de Análise e Desenvolvimento de Sistemas (ADS).
 
-## Objetivo do Projeto
+O sistema permite registrar entradas e saídas, acompanhar o saldo disponível, definir metas de gastos por categoria e visualizar o resumo das movimentações em tempo real.
 
-Criar um dashboard interativo que facilite o acompanhamento das finanças pessoais, permitindo visualizar movimentações, controlar gastos e organizar o orçamento mensal.
+---
 
-## Tecnologias Utilizadas
+## 🚀 Principais Funcionalidades
 
-- **HTML5:** estrutura da aplicação.
-- **CSS3:** estilização e layout responsivo.
-- **JavaScript (ES6+):** funcionalidades, cálculos e interatividade.
+- **Visão Geral:** Acompanhe o saldo atual, total de receitas e despesas, além de um comparativo visual do seu orçamento.
+- **Movimentações:** Cadastre receitas e despesas, faça buscas por texto, filtre por tipo ou categoria e ordene por data ou valor.
+- **Planejamento:** Defina limites de gastos para cada categoria e acompanhe alertas visuais conforme o consumo (verde para dentro da meta, amarelo para atenção e vermelho para limite ultrapassado).
+- **Relatórios:** Visualize o resumo financeiro filtrado por período e descubra onde você mais gastou.
+- **Perfil do Usuário:** Interface personalizada com foto e saudação automática de acordo com o horário do dia.
 
-## Funcionalidades
+---
 
-- **Dashboard:** visualização do saldo, receitas e despesas.
-- **Movimentações:** cadastro, consulta, filtros e exclusão de receitas e despesas.
-- **Planejamento:** definição de limites de gastos por categoria.
-- **Relatórios:** análise de despesas e movimentações por período.
-- **Gráficos:** comparação de receitas, despesas e gastos por categoria.
-- **Notificações:** mensagens de confirmação e alerta durante o uso.
+## 🛠️ Tecnologias Utilizadas
 
-## Estrutura do Projeto
+- **HTML5:** Estrutura das páginas e formulários.
+- **CSS3:** Visual moderno, cores e adaptação para celulares e computadores (responsivo).
+- **JavaScript:** Cálculos automáticos, filtros e atualização da tela sem precisar recarregar.
+
+> **Nota:** Os dados são mantidos na memória enquanto a página estiver aberta e não utilizam banco de dados nem armazenamento permanente. Ao atualizar a página (F5), os registros reiniciam com valores de exemplo.
+
+---
+
+## 📁 Estrutura de Arquivos
 
 ```text
-controle-financeiro/
+Projeto_A2/
 │
-├── index.html
+├── index.html          # Página principal do sistema
 │
-├── css/
+├── css/                # Arquivos de estilo visual e responsividade
 │   ├── style.css
 │   ├── dashboard.css
 │   └── responsive.css
 │
-├── js/
+├── js/                 # Lógica e funcionalidades do sistema
 │   ├── main.js
 │   ├── data.js
 │   ├── validacoes.js
@@ -42,22 +47,30 @@ controle-financeiro/
 │   ├── planejamento.js
 │   └── relatorios.js
 │
+├── assets/             # Imagens e ícones
+│   └── img/
+│       ├── arnaldo.svg
+│       └── logo.svg
 │
-└── README.md
+└── README.md           # Apresentação do projeto
 ```
 
-## Como Executar
+---
 
-1. Baixe ou clone este repositório.
-2. Abra a pasta do projeto no **Visual Studio Code**.
-3. Instale a extensão **Live Server**.
-4. Abra o arquivo `index.html`.
-5. Clique com o botão direito e selecione **Open with Live Server**.
+## 💻 Como Usar
 
-O projeto será aberto automaticamente no navegador.
+Você pode abrir o projeto de duas formas simples:
 
-## Considerações Finais
+1. **Direto no Navegador:** Dê dois cliques no arquivo `index.html`.
+2. **No VS Code:** Abra a pasta no Visual Studio Code, clique com o botão direito no `index.html` e escolha **"Open with Live Server"**.
 
-Projeto desenvolvido para fins acadêmicos, com o objetivo de aplicar na prática os conhecimentos de HTML, CSS e JavaScript.
+---
 
-Os dados financeiros utilizados são fictícios e destinados apenas à demonstração das funcionalidades.
+## 👥 Integrantes do Grupo
+
+| Nome | Função Principal |
+| :--- | :--- |
+| **Arnaldo** | Estrutura HTML e Telas |
+| *[Nome do Aluno]* | Estilização e Design (CSS) |
+| *[Nome do Aluno]* | Funcionalidades e Cálculos (JS) |
+| *[Nome do Aluno]* | Formulários e Documentação |

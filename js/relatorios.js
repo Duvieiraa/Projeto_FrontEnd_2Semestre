@@ -1,88 +1,99 @@
 /**
  * relatorios.js - Finanças Pessoais
- * Módulo de relatórios e análises financeiras consolidadas:
- * - Filtros por período (Todo o período, Mês atual, Últimos 3 meses, Últimos 6 meses)
- * - Indicadores consolidados do período
- * - Ranking das categorias com maiores gastos
- * - Tabela analítica com detalhamento de despesas e receitas
+ * Módulo de Relatórios Financeiros Analíticos e Filtros por Período
+ * 
+ * Conteúdos aplicados do semestre:
+ * - Semana 9: Variáveis (let, const), tipos de dados.
+ * - Semana 11: Manipulação do DOM (getElementById, createElement, appendChild, textContent).
+ * - Semana 12: Operadores lógicos (&&, ||, ===) e estruturas condicionais (if / else).
+ * - Semana 13: Estruturas de repetição (for), Arrays de Objetos e ordenação.
  */
 
-import {
-  obterMovimentacoes,
-  formatarMoeda,
-  inscreverAtualizacao
-} from './data.js';
-
-let periodoSelecionado = 'todos'; // 'todos' | 'mes-atual' | 'ultimos-3' | 'ultimos-6'
+let periodoSelecionado = 'todos';
 
 /**
- * Filtra a lista de movimentações conforme o período selecionado
- * @param {Array} lista 
- * @param {string} periodo 
- * @returns {Array}
+ * Semana 12 e 13: Filtra a lista de movimentações de acordo com o período selecionado
  */
-export function filtrarPorPeriodo(lista, periodo) {
-  if (periodo === 'todos') return lista;
+function filtrarMovimentacoesPorPeriodo(lista, periodo) {
+  if (periodo === 'todos') {
+    return lista;
+  }
 
   const hoje = new Date();
   const anoAtual = hoje.getFullYear();
   const mesAtual = hoje.getMonth(); // 0 a 11
 
-  return lista.filter(item => {
-    if (!item.data) return false;
-    const [anoStr, mesStr] = item.data.split('-');
-    const ano = parseInt(anoStr, 10);
-    const mes = parseInt(mesStr, 10) - 1;
+  const filtrados = [];
 
-    if (periodo === 'mes-atual') {
-      return ano === anoAtual && mes === mesAtual;
+  for (let i = 0; i < lista.length; i++) {
+    const item = lista[i];
+    if (item.data) {
+      const partes = item.data.split('-');
+      const anoItem = parseInt(partes[0], 10);
+      const mesItem = parseInt(partes[1], 10) - 1;
+
+      if (periodo === 'mes-atual') {
+        if (anoItem === anoAtual && mesItem === mesAtual) {
+          filtrados.push(item);
+        }
+      } else if (periodo === 'ultimos-3') {
+        const dataItem = new Date(anoItem, mesItem, 1);
+        const dataLimite = new Date(anoAtual, mesAtual - 2, 1);
+        if (dataItem >= dataLimite && dataItem <= hoje) {
+          filtrados.push(item);
+        }
+      } else if (periodo === 'ultimos-6') {
+        const dataItem = new Date(anoItem, mesItem, 1);
+        const dataLimite = new Date(anoAtual, mesAtual - 5, 1);
+        if (dataItem >= dataLimite && dataItem <= hoje) {
+          filtrados.push(item);
+        }
+      }
     }
+  }
 
-    if (periodo === 'ultimos-3') {
-      const dataItem = new Date(ano, mes, 1);
-      const dataLimite = new Date(anoAtual, mesAtual - 2, 1);
-      return dataItem >= dataLimite && dataItem <= hoje;
-    }
-
-    if (periodo === 'ultimos-6') {
-      const dataItem = new Date(ano, mes, 1);
-      const dataLimite = new Date(anoAtual, mesAtual - 5, 1);
-      return dataItem >= dataLimite && dataItem <= hoje;
-    }
-
-    return true;
-  });
+  return filtrados;
 }
 
 /**
- * Renderiza os cartões de indicadores consolidados do relatório
- * @param {HTMLElement} container 
- * @param {Array} dadosPeriodo 
+ * Semana 11 e 12: Renderiza os 3 cartões de métricas do período selecionado
  */
-function renderizarMetricasPeriodo(container, dadosPeriodo) {
+function renderizarMetricasPeriodo(dadosPeriodo) {
+  const container = document.getElementById('metricas-relatorio');
   if (!container) return;
 
   let totalRec = 0;
   let totalDesp = 0;
+  let qtdRec = 0;
+  let qtdDesp = 0;
 
-  dadosPeriodo.forEach(item => {
-    if (item.tipo === 'receita') totalRec += item.valor;
-    if (item.tipo === 'despesa') totalDesp += item.valor;
-  });
+  for (let i = 0; i < dadosPeriodo.length; i++) {
+    const item = dadosPeriodo[i];
+    if (item.tipo === 'receita') {
+      totalRec += item.valor;
+      qtdRec++;
+    } else if (item.tipo === 'despesa') {
+      totalDesp += item.valor;
+      qtdDesp++;
+    }
+  }
 
   const saldoPeriodo = totalRec - totalDesp;
-  const taxaPoupanca = totalRec > 0 ? ((totalRec - totalDesp) / totalRec) * 100 : 0;
+  let taxaPoupanca = 0;
+  if (totalRec > 0) {
+    taxaPoupanca = ((totalRec - totalDesp) / totalRec) * 100;
+  }
 
   container.innerHTML = `
     <div class="card-kpi">
       <span class="kpi-titulo">Receitas no Período</span>
       <strong class="kpi-valor texto-sucesso">+ ${formatarMoeda(totalRec)}</strong>
-      <span class="kpi-subtitulo">${dadosPeriodo.filter(i => i.tipo === 'receita').length} entrada(s)</span>
+      <span class="kpi-subtitulo">${qtdRec} entrada(s)</span>
     </div>
     <div class="card-kpi">
       <span class="kpi-titulo">Despesas no Período</span>
       <strong class="kpi-valor texto-perigo">- ${formatarMoeda(totalDesp)}</strong>
-      <span class="kpi-subtitulo">${dadosPeriodo.filter(i => i.tipo === 'despesa').length} saída(s)</span>
+      <span class="kpi-subtitulo">${qtdDesp} saída(s)</span>
     </div>
     <div class="card-kpi">
       <span class="kpi-titulo">Resultado Líquido</span>
@@ -93,37 +104,53 @@ function renderizarMetricasPeriodo(container, dadosPeriodo) {
 }
 
 /**
- * Renderiza o Ranking das 5 maiores categorias de gastos
- * @param {HTMLElement} container 
- * @param {Array} dadosPeriodo 
+ * Semana 11 e 13: Renderiza o ranking Top 5 das maiores despesas do período
  */
-function renderizarRankingMaioresGastos(container, dadosPeriodo) {
+function renderizarRankingMaioresGastos(dadosPeriodo) {
+  const container = document.getElementById('ranking-gastos-relatorio');
   if (!container) return;
 
-  const gastosPorCategoria = {};
+  const gastos = {};
   let totalDespesasPeriodo = 0;
 
-  dadosPeriodo.forEach(item => {
+  for (let i = 0; i < dadosPeriodo.length; i++) {
+    const item = dadosPeriodo[i];
     if (item.tipo === 'despesa') {
-      gastosPorCategoria[item.categoria] = (gastosPorCategoria[item.categoria] || 0) + item.valor;
+      if (!gastos[item.categoria]) {
+        gastos[item.categoria] = 0;
+      }
+      gastos[item.categoria] += item.valor;
       totalDespesasPeriodo += item.valor;
     }
+  }
+
+  // Converte para array para ordenar
+  const listaRanking = [];
+  for (let cat in gastos) {
+    listaRanking.push({ categoria: cat, valor: gastos[cat] });
+  }
+
+  listaRanking.sort(function(a, b) {
+    return b.valor - a.valor;
   });
 
-  const ranking = Object.entries(gastosPorCategoria)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5);
-
+  const top5 = listaRanking.slice(0, 5);
   container.innerHTML = '';
 
-  if (ranking.length === 0) {
+  if (top5.length === 0) {
     container.innerHTML = '<p class="legenda-vazia">Nenhuma despesa registrada para o período selecionado.</p>';
     return;
   }
 
-  const maxGasto = ranking[0][1];
+  const maiorValor = top5[0].valor;
 
-  ranking.forEach(([categoria, valor], index) => {
+  for (let i = 0; i < top5.length; i++) {
+    const item = top5[i];
+    let percentual = 0;
+    if (totalDespesasPeriodo > 0) {
+      percentual = ((item.valor / totalDespesasPeriodo) * 100).toFixed(1);
+    }
+
     const itemRanking = document.createElement('div');
     itemRanking.className = 'item-ranking';
 
@@ -135,118 +162,140 @@ function renderizarRankingMaioresGastos(container, dadosPeriodo) {
 
     const posicao = document.createElement('span');
     posicao.className = 'numero-posicao';
-    posicao.textContent = `#${index + 1}`;
+    posicao.textContent = '#' + (i + 1);
 
     const nome = document.createElement('strong');
     nome.className = 'nome-categoria-ranking';
-    nome.textContent = categoria;
+    nome.textContent = item.categoria;
 
-    info.append(posicao, nome);
+    info.appendChild(posicao);
+    info.appendChild(nome);
 
-    const percentualDoTotal = totalDespesasPeriodo > 0 ? ((valor / totalDespesasPeriodo) * 100).toFixed(1) : 0;
     const valorEl = document.createElement('div');
     valorEl.className = 'valores-ranking';
-    valorEl.innerHTML = `<strong>${formatarMoeda(valor)}</strong> <small class="porcentagem-ranking">(${percentualDoTotal}%)</small>`;
+    valorEl.innerHTML = `<strong>${formatarMoeda(item.valor)}</strong> <small class="porcentagem-ranking">(${percentual}%)</small>`;
 
-    linhaTopo.append(info, valorEl);
+    linhaTopo.appendChild(info);
+    linhaTopo.appendChild(valorEl);
 
-    // Barra proporcional
+    // Barra de progresso proporcional
     const trilha = document.createElement('div');
     trilha.className = 'trilha-ranking';
 
     const barra = document.createElement('div');
     barra.className = 'barra-ranking';
-    barra.style.width = `${(valor / maxGasto) * 100}%`;
+    let largura = 0;
+    if (maiorValor > 0) {
+      largura = (item.valor / maiorValor) * 100;
+    }
+    barra.style.width = largura + '%';
 
-    trilha.append(barra);
-    itemRanking.append(linhaTopo, trilha);
-    container.append(itemRanking);
-  });
+    trilha.appendChild(barra);
+    itemRanking.appendChild(linhaTopo);
+    itemRanking.appendChild(trilha);
+
+    container.appendChild(itemRanking);
+  }
 }
 
 /**
- * Renderiza a tabela analítica de distribuição por categorias
- * @param {HTMLElement} tbodyElement 
- * @param {Array} dadosPeriodo 
+ * Semana 11 e 13: Renderiza a tabela analítica com o detalhamento por categoria
  */
-function renderizarTabelaAnalitica(tbodyElement, dadosPeriodo) {
-  if (!tbodyElement) return;
+function renderizarTabelaAnalitica(dadosPeriodo) {
+  const tbody = document.getElementById('tbody-relatorios-analitico');
+  if (!tbody) return;
 
-  const totaisCategorias = {};
-  let totalDespesas = 0;
+  const categoriasMap = {};
+  let totalDespesasPeriodo = 0;
 
-  dadosPeriodo.forEach(item => {
+  for (let i = 0; i < dadosPeriodo.length; i++) {
+    const item = dadosPeriodo[i];
     if (item.tipo === 'despesa') {
-      if (!totaisCategorias[item.categoria]) {
-        totaisCategorias[item.categoria] = { total: 0, quantidade: 0 };
+      if (!categoriasMap[item.categoria]) {
+        categoriasMap[item.categoria] = { total: 0, quantidade: 0 };
       }
-      totaisCategorias[item.categoria].total += item.valor;
-      totaisCategorias[item.categoria].quantidade += 1;
-      totalDespesas += item.valor;
+      categoriasMap[item.categoria].total += item.valor;
+      categoriasMap[item.categoria].quantidade += 1;
+      totalDespesasPeriodo += item.valor;
     }
-  });
-
-  tbodyElement.innerHTML = '';
-
-  const categorias = Object.entries(totaisCategorias).sort((a, b) => b[1].total - a[1].total);
-
-  if (categorias.length === 0) {
-    const tr = document.createElement('tr');
-    tr.innerHTML = '<td colspan="4" class="td-vazio">Sem dados de despesas no período selecionado.</td>';
-    tbodyElement.append(tr);
-    return;
   }
 
-  categorias.forEach(([categoria, dados]) => {
-    const tr = document.createElement('tr');
-
-    const tdCat = document.createElement('td');
-    tdCat.textContent = categoria;
-
-    const tdQtd = document.createElement('td');
-    tdQtd.textContent = `${dados.quantidade} ${dados.quantidade === 1 ? 'registro' : 'registros'}`;
-
-    const tdValor = document.createElement('td');
-    tdValor.className = 'col-valor valor-negativo';
-    tdValor.textContent = formatarMoeda(dados.total);
-
-    const tdPercent = document.createElement('td');
-    const pct = totalDespesas > 0 ? ((dados.total / totalDespesas) * 100).toFixed(1) : 0;
-    tdPercent.textContent = `${pct}%`;
-
-    tr.append(tdCat, tdQtd, tdValor, tdPercent);
-    tbodyElement.append(tr);
-  });
-}
-
-/**
- * Inicializa a tela de relatórios
- * @param {Object} elementosDOM 
- */
-export function inicializarRelatorios(elementosDOM) {
-  const {
-    selectFiltroPeriodo,
-    containerMetricasRelatorio,
-    containerRankingGastos,
-    tbodyAnaliticoRelatorios
-  } = elementosDOM;
-
-  const atualizarVisao = () => {
-    const todasMovimentacoes = obterMovimentacoes();
-    const dadosFiltrados = filtrarPorPeriodo(todasMovimentacoes, periodoSelecionado);
-
-    renderizarMetricasPeriodo(containerMetricasRelatorio, dadosFiltrados);
-    renderizarRankingMaioresGastos(containerRankingGastos, dadosFiltrados);
-    renderizarTabelaAnalitica(tbodyAnaliticoRelatorios, dadosFiltrados);
-  };
-
-  if (selectFiltroPeriodo) {
-    selectFiltroPeriodo.addEventListener('change', (e) => {
-      periodoSelecionado = e.target.value;
-      atualizarVisao();
+  const listaCategorias = [];
+  for (let cat in categoriasMap) {
+    listaCategorias.push({
+      categoria: cat,
+      total: categoriasMap[cat].total,
+      quantidade: categoriasMap[cat].quantidade
     });
   }
 
-  inscreverAtualizacao(atualizarVisao);
-  atualizarVisao();
+  listaCategorias.sort(function(a, b) {
+    return b.total - a.total;
+  });
+
+  tbody.innerHTML = '';
+
+  if (listaCategorias.length === 0) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td colspan="4" class="td-vazio">Sem dados de despesas no período selecionado.</td>';
+    tbody.appendChild(tr);
+    return;
+  }
+
+  for (let i = 0; i < listaCategorias.length; i++) {
+    const item = listaCategorias[i];
+    let percentual = 0;
+    if (totalDespesasPeriodo > 0) {
+      percentual = ((item.total / totalDespesasPeriodo) * 100).toFixed(1);
+    }
+
+    const tr = document.createElement('tr');
+
+    const tdCat = document.createElement('td');
+    tdCat.textContent = item.categoria;
+
+    const tdQtd = document.createElement('td');
+    tdQtd.textContent = item.quantidade + (item.quantidade === 1 ? ' registro' : ' registros');
+
+    const tdValor = document.createElement('td');
+    tdValor.className = 'col-valor valor-negativo';
+    tdValor.textContent = formatarMoeda(item.total);
+
+    const tdPct = document.createElement('td');
+    tdPct.textContent = percentual + '%';
+
+    tr.appendChild(tdCat);
+    tr.appendChild(tdQtd);
+    tr.appendChild(tdValor);
+    tr.appendChild(tdPct);
+
+    tbody.appendChild(tr);
+  }
+}
+
+/**
+ * Função mestre para renderizar toda a seção de Relatórios
+ */
+function renderizarRelatorios() {
+  const todas = obterMovimentacoes();
+  const filtradas = filtrarMovimentacoesPorPeriodo(todas, periodoSelecionado);
+
+  renderizarMetricasPeriodo(filtradas);
+  renderizarRankingMaioresGastos(filtradas);
+  renderizarTabelaAnalitica(filtradas);
+}
+
+/**
+ * Semana 11: Configura o evento change do select de filtro de período
+ */
+function inicializarRelatorios() {
+  const selectPeriodo = document.getElementById('filtro-periodo-relatorio');
+  if (selectPeriodo) {
+    selectPeriodo.addEventListener('change', function() {
+      periodoSelecionado = selectPeriodo.value;
+      renderizarRelatorios();
+    });
+  }
+
+  renderizarRelatorios();
 }

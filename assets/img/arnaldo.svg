@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e6f4ea"/>
+      <stop offset="100%" stop-color="#bbf0d6"/>
+    </linearGradient>
+    <linearGradient id="shirtGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f4c3a"/>
+      <stop offset="100%" stop-color="#165b47"/>
+    </linearGradient>
+    <linearGradient id="skinGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fbd9c4"/>
+      <stop offset="100%" stop-color="#f2be9b"/>
+    </linearGradient>
+    <clipPath id="avatarClip">
+      <circle cx="60" cy="60" r="58"/>
+    </clipPath>
+  </defs>
+
+  <!-- Borda Externa e Fundo -->
+  <circle cx="60" cy="60" r="59" fill="#0f4c3a" />
+  <circle cx="60" cy="60" r="58" fill="url(#bgGrad)"/>
+
+  <g clip-path="url(#avatarClip)">
+    <!-- Corpo / Roupa -->
+    <path d="M18 120 C22 92 38 82 60 82 C82 82 98 92 102 120 Z" fill="url(#shirtGrad)"/>
+    
+    <!-- Gola da Camisa / Detalhe interno -->
+    <path d="M48 83 L60 100 L72 83 Z" fill="#ffffff"/>
+    <path d="M53 83 L60 94 L67 83 Z" fill="#e2e8f0"/>
+
+    <!-- Pescoço -->
+    <path d="M49 68 L71 68 L71 85 L49 85 Z" fill="#f2be9b"/>
+    <!-- Sombra do queixo no pescoço -->
+    <path d="M49 68 C55 74 65 74 71 68 L71 73 C65 78 55 78 49 73 Z" fill="#e0a680" opacity="0.6"/>
+
+    <!-- Cabeça / Rosto -->
+    <ellipse cx="60" cy="52" rx="22" ry="25" fill="url(#skinGrad)"/>
+
+    <!-- Orelhas -->
+    <ellipse cx="38" cy="53" rx="4.5" ry="7" fill="#f2be9b"/>
+    <ellipse cx="38.5" cy="53" rx="2.5" ry="4" fill="#e0a680"/>
+    <ellipse cx="82" cy="53" rx="4.5" ry="7" fill="#f2be9b"/>
+    <ellipse cx="81.5" cy="53" rx="2.5" ry="4" fill="#e0a680"/>
+
+    <!-- Barba / Contorno Facial (Arnaldo) -->
+    <path d="M43 54 C43 72 50 78 60 78 C70 78 77 72 77 54 C77 64 71 74 60 74 C49 74 43 64 43 54 Z" fill="#2d3748" opacity="0.35"/>
+    <path d="M51 68 C54 71 66 71 69 68 C66 70 54 70 51 68 Z" fill="#2d3748" opacity="0.4"/>
+
+    <!-- Boca / Sorriso -->
+    <path d="M52 64 Q60 70 68 64" stroke="#c05621" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M54 64.5 Q60 67.5 66 64.5" stroke="#ffffff" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+
+    <!-- Nariz -->
+    <path d="M59 47 L58 57 L62 57" stroke="#d69e78" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Olhos -->
+    <ellipse cx="50" cy="48" rx="2.8" ry="3.5" fill="#1a202c"/>
+    <circle cx="51" cy="46.8" r="1" fill="#ffffff"/>
+    
+    <ellipse cx="70" cy="48" rx="2.8" ry="3.5" fill="#1a202c"/>
+    <circle cx="71" cy="46.8" r="1" fill="#ffffff"/>
+
+    <!-- Sobrancelhas -->
+    <path d="M45 42 Q51 39 56 42" stroke="#2d3748" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M64 42 Q69 39 75 42" stroke="#2d3748" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+    <!-- Cabelo Moderno -->
+    <path d="M38 46 C36 34 44 26 60 26 C76 26 84 34 82 46 C80 34 74 30 60 30 C46 30 40 34 38 46 Z" fill="#1a202c"/>
+    <path d="M41 42 C45 32 54 30 64 30 C72 30 78 33 81 41 C82 35 78 27 62 27 C46 27 40 35 41 42 Z" fill="#2d3748"/>
+  </g>
+</svg>

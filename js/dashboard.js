@@ -1,111 +1,118 @@
 /**
  * dashboard.js - Finanças Pessoais
- * Módulo responsável pela renderização da Visão Geral (Dashboard):
- * - 4 KPIs dinâmicos (Saldo Disponível, Receitas, Despesas, Resultado)
- * - Painel de Dados Reais: Comparativo Receitas vs Despesas (substituindo imagens/canvas)
- * - Painel de Dados Reais: Distribuição de Despesas por Categoria com barras e percentuais exatos
- * - Painel de Dados Reais: Resumo do Fluxo Mensal
- * - Lista detalhada das últimas transações
+ * Módulo de Renderização do Dashboard (Visão Geral)
+ * 
+ * Conteúdos aplicados do semestre:
+ * - Semana 9: Variáveis (let, const), tipos de dados.
+ * - Semana 11: Manipulação do DOM (getElementById, textContent, innerHTML, classList).
+ * - Semana 12: Operadores lógicos e estruturas condicionais (if / else).
+ * - Semana 13: Estruturas de repetição (for), Arrays e Objetos.
  */
 
-import {
-  obterMovimentacoes,
-  calcularTotais,
-  calcularGastosPorCategoria,
-  formatarMoeda,
-  formatarData,
-  inscreverAtualizacao
-} from './data.js';
-
-// Cores temáticas para identificação visual das categorias
-const CORES_CATEGORIAS = [
-  '#0f4c3a', // Verde escuro esmeralda
-  '#1ab273', // Verde menta
-  '#2a9d8f', // Turquesa
-  '#e76f51', // Coral terracota
-  '#f4a261', // Laranja suave
-  '#d94343', // Vermelho suave
-  '#3b82f6', // Azul moderno
-  '#8b5cf6'  // Roxo moderno
+// Paleta de cores para identificar visualmente cada categoria
+const CORES_CATEGORIAS_DASH = [
+  '#0f4c3a',
+  '#1ab273',
+  '#2a9d8f',
+  '#e76f51',
+  '#f4a261',
+  '#d94343',
+  '#3b82f6',
+  '#8b5cf6'
 ];
 
 /**
- * Atualiza os valores dos 4 cartões de métricas principais (KPIs)
- * @param {Object} elementos - Referências aos elementos do DOM
+ * Semana 11 e 12: Atualiza os 4 cartões de indicadores (KPIs) no topo da Visão Geral
  */
-export function atualizarCartoesKPI(elementos) {
-  const { kpiSaldo, kpiReceitas, kpiDespesas, kpiResultado, kpiTaxaPoupanca } = elementos;
+function atualizarCartoesKPI() {
+  const elSaldo = document.getElementById('kpi-saldo-valor');
+  const elReceitas = document.getElementById('kpi-receitas-valor');
+  const elDespesas = document.getElementById('kpi-despesas-valor');
+  const elResultado = document.getElementById('kpi-resultado-valor');
+  const elTaxaPoupanca = document.getElementById('kpi-taxa-poupanca');
+
   const totais = calcularTotais();
 
-  // 1. Saldo Disponível
-  if (kpiSaldo) {
-    kpiSaldo.textContent = formatarMoeda(totais.saldoDisponivel);
+  // 1. Saldo Disponível (Semana 12: condicional if/else para definir a cor)
+  if (elSaldo) {
+    elSaldo.textContent = formatarMoeda(totais.saldoDisponivel);
     if (totais.saldoDisponivel < 0) {
-      kpiSaldo.classList.add('texto-perigo');
-      kpiSaldo.classList.remove('texto-sucesso');
+      elSaldo.classList.add('texto-perigo');
+      elSaldo.classList.remove('texto-sucesso');
     } else {
-      kpiSaldo.classList.add('texto-sucesso');
-      kpiSaldo.classList.remove('texto-perigo');
+      elSaldo.classList.add('texto-sucesso');
+      elSaldo.classList.remove('texto-perigo');
     }
   }
 
   // 2. Total de Receitas
-  if (kpiReceitas) {
-    kpiReceitas.textContent = formatarMoeda(totais.totalReceitas);
+  if (elReceitas) {
+    elReceitas.textContent = formatarMoeda(totais.totalReceitas);
   }
 
   // 3. Total de Despesas
-  if (kpiDespesas) {
-    kpiDespesas.textContent = formatarMoeda(totais.totalDespesas);
+  if (elDespesas) {
+    elDespesas.textContent = formatarMoeda(totais.totalDespesas);
   }
 
-  // 4. Resultado Financeiro e Taxa de Economia
-  if (kpiResultado) {
-    kpiResultado.textContent = formatarMoeda(totais.resultadoMes);
+  // 4. Resultado Financeiro
+  if (elResultado) {
+    elResultado.textContent = formatarMoeda(totais.resultadoMes);
     if (totais.resultadoMes < 0) {
-      kpiResultado.classList.add('texto-perigo');
-      kpiResultado.classList.remove('texto-sucesso');
+      elResultado.classList.add('texto-perigo');
+      elResultado.classList.remove('texto-sucesso');
     } else {
-      kpiResultado.classList.add('texto-sucesso');
-      kpiResultado.classList.remove('texto-perigo');
+      elResultado.classList.add('texto-sucesso');
+      elResultado.classList.remove('texto-perigo');
     }
   }
 
-  if (kpiTaxaPoupanca) {
-    kpiTaxaPoupanca.textContent = `${totais.taxaEconomia.toFixed(1)}% economizado`;
+  if (elTaxaPoupanca) {
+    elTaxaPoupanca.textContent = totais.taxaEconomia.toFixed(1) + '% economizado';
   }
 }
 
 /**
- * Renderiza o Painel de Dados Reais: Receitas vs Despesas
- * Apresenta métricas exatas e proporção visual baseadas nas movimentações cadastradas
- * @param {HTMLElement} container 
+ * Semana 11, 12 e 13: Renderiza o painel de Receitas vs Despesas com dados reais das movimentações
  */
-export function renderizarPainelComparativo(container) {
+function renderizarPainelComparativo() {
+  const container = document.getElementById('painel-comparativo-dados');
   if (!container) return;
 
-  const movimentacoes = obterMovimentacoes();
+  const lista = obterMovimentacoes();
   const totais = calcularTotais();
 
-  const receitas = movimentacoes.filter(m => m.tipo === 'receita');
-  const despesas = movimentacoes.filter(m => m.tipo === 'despesa');
+  let qtdReceitas = 0;
+  let qtdDespesas = 0;
+  let maiorReceita = null;
+  let maiorDespesa = null;
 
-  // Encontra a maior receita e maior despesa
-  const maiorReceita = receitas.length > 0 
-    ? receitas.reduce((max, cur) => cur.valor > max.valor ? cur : max, receitas[0])
-    : null;
-
-  const maiorDespesa = despesas.length > 0 
-    ? despesas.reduce((max, cur) => cur.valor > max.valor ? cur : max, despesas[0])
-    : null;
+  // Semana 13: Loop for para calcular quantidades e identificar maior entrada/saída
+  for (let i = 0; i < lista.length; i++) {
+    const item = lista[i];
+    if (item.tipo === 'receita') {
+      qtdReceitas++;
+      if (maiorReceita === null || item.valor > maiorReceita.valor) {
+        maiorReceita = item;
+      }
+    } else if (item.tipo === 'despesa') {
+      qtdDespesas++;
+      if (maiorDespesa === null || item.valor > maiorDespesa.valor) {
+        maiorDespesa = item;
+      }
+    }
+  }
 
   const totalGeral = totais.totalReceitas + totais.totalDespesas;
-  const pctReceita = totalGeral > 0 ? ((totais.totalReceitas / totalGeral) * 100).toFixed(1) : 0;
-  const pctDespesa = totalGeral > 0 ? ((totais.totalDespesas / totalGeral) * 100).toFixed(1) : 0;
+  let pctReceita = 0;
+  let pctDespesa = 0;
+  if (totalGeral > 0) {
+    pctReceita = ((totais.totalReceitas / totalGeral) * 100).toFixed(1);
+    pctDespesa = ((totais.totalDespesas / totalGeral) * 100).toFixed(1);
+  }
 
   container.innerHTML = `
     <div class="painel-comparativo-real">
-      <!-- Barra Proporcional de Entradas vs Saídas -->
       <div>
         <div class="legenda-barra-dupla" style="margin-bottom: 8px;">
           <span style="color: var(--color-receita);">Receitas: ${pctReceita}%</span>
@@ -117,12 +124,11 @@ export function renderizarPainelComparativo(container) {
         </div>
       </div>
 
-      <!-- Detalhamento em Cartões -->
       <div class="grid-comparativo-cards">
         <div class="card-mini-comparativo receita">
           <div class="mini-cabecalho">
             <span>Total Entradas</span>
-            <span class="badge-tipo badge-receita">+ ${receitas.length} reg.</span>
+            <span class="badge-tipo badge-receita">+ ${qtdReceitas} reg.</span>
           </div>
           <strong class="mini-valor texto-sucesso">${formatarMoeda(totais.totalReceitas)}</strong>
           <span class="mini-info-adicional">
@@ -133,7 +139,7 @@ export function renderizarPainelComparativo(container) {
         <div class="card-mini-comparativo despesa">
           <div class="mini-cabecalho">
             <span>Total Saídas</span>
-            <span class="badge-tipo badge-despesa">- ${despesas.length} reg.</span>
+            <span class="badge-tipo badge-despesa">- ${qtdDespesas} reg.</span>
           </div>
           <strong class="mini-valor texto-perigo">${formatarMoeda(totais.totalDespesas)}</strong>
           <span class="mini-info-adicional">
@@ -142,7 +148,6 @@ export function renderizarPainelComparativo(container) {
         </div>
       </div>
 
-      <!-- Linha de Balanço e Economia -->
       <div class="linha-resumo-balanco">
         <div>
           <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">Saldo Líquido em Caixa</span>
@@ -161,27 +166,46 @@ export function renderizarPainelComparativo(container) {
 }
 
 /**
- * Renderiza o Painel de Dados Reais: Despesas por Categoria
- * Substitui o gráfico por um detalhamento visual com valores reais e barras proporcionais
- * @param {HTMLElement} container 
+ * Semana 11 e 13: Renderiza o painel de Despesas por Categoria com barras proporcionais reais
  */
-export function renderizarPainelCategorias(container) {
+function renderizarPainelCategorias() {
+  const container = document.getElementById('painel-categorias-dados');
   if (!container) return;
 
-  const movimentacoes = obterMovimentacoes();
+  const lista = obterMovimentacoes();
   const gastosPorCategoria = calcularGastosPorCategoria();
   const totais = calcularTotais();
-
   const totalDespesas = totais.totalDespesas;
 
-  // Filtra apenas categorias com gastos reais e ordena do maior para o menor
-  const categoriasAtivas = Object.entries(gastosPorCategoria)
-    .filter(([_, valor]) => valor > 0)
-    .sort((a, b) => b[1] - a[1]);
+  // Monta lista com as categorias que possuem gastos > 0
+  const categoriasComGasto = [];
+  for (let i = 0; i < CATEGORIAS_DESPESA.length; i++) {
+    const nomeCat = CATEGORIAS_DESPESA[i];
+    const valorGasto = gastosPorCategoria[nomeCat] || 0;
+    if (valorGasto > 0) {
+      // Conta quantidade de lançamentos desta categoria
+      let qtd = 0;
+      for (let j = 0; j < lista.length; j++) {
+        if (lista[j].tipo === 'despesa' && lista[j].categoria === nomeCat) {
+          qtd++;
+        }
+      }
+      categoriasComGasto.push({
+        categoria: nomeCat,
+        valor: valorGasto,
+        quantidade: qtd
+      });
+    }
+  }
+
+  // Ordena da maior para a menor despesa
+  categoriasComGasto.sort(function(a, b) {
+    return b.valor - a.valor;
+  });
 
   container.innerHTML = '';
 
-  if (categoriasAtivas.length === 0) {
+  if (categoriasComGasto.length === 0) {
     container.innerHTML = '<p class="legenda-vazia">Nenhuma despesa registrada no momento.</p>';
     return;
   }
@@ -189,78 +213,80 @@ export function renderizarPainelCategorias(container) {
   const painel = document.createElement('div');
   painel.className = 'painel-categorias-real';
 
-  categoriasAtivas.forEach(([categoria, valor], index) => {
-    const percentual = totalDespesas > 0 ? ((valor / totalDespesas) * 100).toFixed(1) : 0;
-    const cor = CORES_CATEGORIAS[index % CORES_CATEGORIAS.length];
-
-    // Conta quantidade real de lançamentos desta categoria
-    const qtdLancamentos = movimentacoes.filter(m => m.tipo === 'despesa' && m.categoria === categoria).length;
+  for (let i = 0; i < categoriasComGasto.length; i++) {
+    const item = categoriasComGasto[i];
+    let percentual = 0;
+    if (totalDespesas > 0) {
+      percentual = ((item.valor / totalDespesas) * 100).toFixed(1);
+    }
+    const cor = CORES_CATEGORIAS_DASH[i % CORES_CATEGORIAS_DASH.length];
 
     const itemEl = document.createElement('div');
     itemEl.className = 'item-categoria-real';
-
     itemEl.innerHTML = `
       <div class="item-categoria-topo">
         <div class="item-categoria-nome-wrapper">
           <span class="categoria-dot" style="background-color: ${cor};"></span>
-          <span class="item-categoria-nome">${categoria}</span>
+          <span class="item-categoria-nome">${item.categoria}</span>
         </div>
         <div class="item-categoria-valor-wrapper">
-          <span class="item-categoria-valor">${formatarMoeda(valor)}</span>
+          <span class="item-categoria-valor">${formatarMoeda(item.valor)}</span>
           <span class="item-categoria-pct">(${percentual}%)</span>
         </div>
       </div>
-
       <div class="item-categoria-trilha">
         <div class="item-categoria-progresso" style="width: ${percentual}%; background-color: ${cor};"></div>
       </div>
-
       <div class="item-categoria-rodape">
-        <span>${qtdLancamentos} ${qtdLancamentos === 1 ? 'lançamento' : 'lançamentos'}</span>
-        <span>${formatarMoeda(valor)} do total de despesas</span>
+        <span>${item.quantidade} ${item.quantidade === 1 ? 'lançamento' : 'lançamentos'}</span>
+        <span>${formatarMoeda(item.valor)} do total de saídas</span>
       </div>
     `;
 
-    painel.append(itemEl);
-  });
+    painel.appendChild(itemEl);
+  }
 
-  container.append(painel);
+  container.appendChild(painel);
 }
 
 /**
- * Renderiza o Painel de Evolução Mensal com dados reais agrupados
- * @param {HTMLElement} container 
+ * Semana 13: Renderiza o fluxo mensal consolidado
  */
-export function renderizarPainelEvolucao(container) {
+function renderizarPainelEvolucao() {
+  const container = document.getElementById('painel-evolucao-dados');
   if (!container) return;
 
-  const movimentacoes = obterMovimentacoes();
+  const lista = obterMovimentacoes();
   const mesesMap = {};
   const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
-  movimentacoes.forEach(m => {
-    if (!m.data) return;
-    const partes = m.data.split('-');
-    if (partes.length >= 2) {
-      const ano = partes[0];
-      const mesNum = parseInt(partes[1], 10) - 1;
-      const chave = `${ano}-${partes[1]}`;
-      const nomeMes = `${nomesMeses[mesNum]} / ${ano}`;
+  for (let i = 0; i < lista.length; i++) {
+    const item = lista[i];
+    if (item.data) {
+      const partes = item.data.split('-');
+      if (partes.length >= 2) {
+        const ano = partes[0];
+        const mesIdx = parseInt(partes[1], 10) - 1;
+        const chave = ano + '-' + partes[1];
+        const nomeFormatado = nomesMeses[mesIdx] + ' / ' + ano;
 
-      if (!mesesMap[chave]) {
-        mesesMap[chave] = { nome: nomeMes, receitas: 0, despesas: 0 };
+        if (!mesesMap[chave]) {
+          mesesMap[chave] = { nome: nomeFormatado, receitas: 0, despesas: 0 };
+        }
+
+        if (item.tipo === 'receita') {
+          mesesMap[chave].receitas += item.valor;
+        } else if (item.tipo === 'despesa') {
+          mesesMap[chave].despesas += item.valor;
+        }
       }
-
-      if (m.tipo === 'receita') mesesMap[chave].receitas += m.valor;
-      if (m.tipo === 'despesa') mesesMap[chave].despesas += m.valor;
     }
-  });
+  }
 
-  const entradasMeses = Object.values(mesesMap);
-
+  const mesesArray = Object.values(mesesMap);
   container.innerHTML = '';
 
-  if (entradasMeses.length === 0) {
+  if (mesesArray.length === 0) {
     container.innerHTML = '<p class="legenda-vazia">Sem movimentações para exibir no fluxo mensal.</p>';
     return;
   }
@@ -268,48 +294,60 @@ export function renderizarPainelEvolucao(container) {
   const painel = document.createElement('div');
   painel.className = 'painel-evolucao-real';
 
-  entradasMeses.forEach(item => {
-    const saldo = item.receitas - item.despesas;
+  for (let i = 0; i < mesesArray.length; i++) {
+    const mes = mesesArray[i];
+    const saldo = mes.receitas - mes.despesas;
+
     const itemEl = document.createElement('div');
     itemEl.className = 'item-mes-real';
-
     itemEl.innerHTML = `
       <div>
-        <span class="mes-nome">${item.nome}</span>
+        <span class="mes-nome">${mes.nome}</span>
         <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">
           Balanço líquido: <strong class="${saldo >= 0 ? 'texto-sucesso' : 'texto-perigo'}">${formatarMoeda(saldo)}</strong>
         </div>
       </div>
       <div class="mes-detalhes">
-        <span class="texto-sucesso">Entradas: <strong>+ ${formatarMoeda(item.receitas)}</strong></span>
-        <span class="texto-perigo">Saídas: <strong>- ${formatarMoeda(item.despesas)}</strong></span>
+        <span class="texto-sucesso">Entradas: <strong>+ ${formatarMoeda(mes.receitas)}</strong></span>
+        <span class="texto-perigo">Saídas: <strong>- ${formatarMoeda(mes.despesas)}</strong></span>
       </div>
     `;
 
-    painel.append(itemEl);
-  });
+    painel.appendChild(itemEl);
+  }
 
-  container.append(painel);
+  container.appendChild(painel);
 }
 
 /**
- * Renderiza o widget de resumo das últimas 5 transações na Visão Geral
- * @param {HTMLElement} containerLista 
+ * Semana 11: Renderiza as 5 últimas movimentações registradas
  */
-export function renderizarTransacoesRecentes(containerLista) {
-  if (!containerLista) return;
+function renderizarTransacoesRecentes() {
+  const container = document.getElementById('lista-recentes-dashboard');
+  if (!container) return;
 
   const todas = obterMovimentacoes();
-  const recentes = [...todas].sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 5);
 
-  containerLista.innerHTML = '';
+  // Clona e ordena pelas mais recentes
+  const ordenadas = [];
+  for (let i = 0; i < todas.length; i++) {
+    ordenadas.push(todas[i]);
+  }
+  ordenadas.sort(function(a, b) {
+    return new Date(b.data) - new Date(a.data);
+  });
+
+  const recentes = ordenadas.slice(0, 5);
+
+  container.innerHTML = '';
 
   if (recentes.length === 0) {
-    containerLista.innerHTML = '<p class="lista-vazia-texto" style="padding: 20px; text-align: center; color: var(--text-muted);">Nenhuma transação recente.</p>';
+    container.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--text-muted);">Nenhuma transação recente.</p>';
     return;
   }
 
-  recentes.forEach(item => {
+  for (let i = 0; i < recentes.length; i++) {
+    const item = recentes[i];
     const itemEl = document.createElement('div');
     itemEl.className = 'item-transacao-recente';
 
@@ -322,32 +360,28 @@ export function renderizarTransacoesRecentes(containerLista) {
 
     const meta = document.createElement('span');
     meta.className = 'meta-recente';
-    meta.textContent = `${formatarData(item.data)} • ${item.categoria}`;
+    meta.textContent = formatarData(item.data) + ' • ' + item.categoria;
 
-    info.append(titulo, meta);
+    info.appendChild(titulo);
+    info.appendChild(meta);
 
     const valor = document.createElement('span');
-    valor.className = `valor-recente ${item.tipo === 'receita' ? 'positivo' : 'negativo'}`;
+    valor.className = 'valor-recente ' + (item.tipo === 'receita' ? 'positivo' : 'negativo');
     valor.textContent = (item.tipo === 'receita' ? '+ ' : '- ') + formatarMoeda(item.valor);
 
-    itemEl.append(info, valor);
-    containerLista.append(itemEl);
-  });
+    itemEl.appendChild(info);
+    itemEl.appendChild(valor);
+    container.appendChild(itemEl);
+  }
 }
 
 /**
- * Inicializa a Visão Geral conectando todos os painéis com dados reais
- * @param {Object} elementosDOM 
+ * Função mestre para renderizar toda a tela do Dashboard
  */
-export function inicializarDashboard(elementosDOM) {
-  const renderizarTudo = () => {
-    atualizarCartoesKPI(elementosDOM);
-    if (elementosDOM.containerComparativo) renderizarPainelComparativo(elementosDOM.containerComparativo);
-    if (elementosDOM.containerCategorias) renderizarPainelCategorias(elementosDOM.containerCategorias);
-    if (elementosDOM.containerEvolucao) renderizarPainelEvolucao(elementosDOM.containerEvolucao);
-    if (elementosDOM.containerRecentes) renderizarTransacoesRecentes(elementosDOM.containerRecentes);
-  };
-
-  inscreverAtualizacao(renderizarTudo);
-  renderizarTudo();
+function renderizarDashboard() {
+  atualizarCartoesKPI();
+  renderizarPainelComparativo();
+  renderizarPainelCategorias();
+  renderizarPainelEvolucao();
+  renderizarTransacoesRecentes();
 }

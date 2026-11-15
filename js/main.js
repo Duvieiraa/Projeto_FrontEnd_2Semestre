@@ -1,153 +1,161 @@
 /**
  * main.js - Finanças Pessoais
- * Módulo principal e orquestrador do sistema:
- * - Navegação SPA entre as 4 telas (Visão Geral, Movimentações, Planejamento, Relatórios)
- * - Cabeçalho dinâmico (Saudação por horário e Data atual por extenso)
- * - Controle do Modal Global de Nova Movimentação
- * - Sistema centralizado de Notificações Toast
- * - Responsividade do menu lateral mobile
+ * Módulo Orquestrador da Aplicação e Controle da Navegação SPA
+ * 
+ * Conteúdos aplicados do semestre:
+ * - Semana 9: Variáveis (let, const), tipos de dados.
+ * - Semana 11: Manipulação do DOM (getElementById, querySelectorAll, classList, addEventListener).
+ * - Semana 12: Operadores lógicos e estruturas condicionais (if / else).
+ * - Semana 13: Estruturas de repetição (for) e integração de módulos.
  */
 
-import { inicializarDashboard } from './dashboard.js';
-import { inicializarMovimentacoes } from './movimentacoes.js';
-import { inicializarPlanejamento } from './planejamento.js';
-import { inicializarRelatorios } from './relatorios.js';
-
-document.addEventListener('DOMContentLoaded', () => {
-  // 1. Configuração da Data Atual e Saudação Dinâmica
+// Executa a inicialização assim que o HTML for completamente carregado no navegador
+document.addEventListener('DOMContentLoaded', function() {
+  // 1. Configura a saudação dinâmica (Arnaldo) e data atual
   atualizarCabecalhoDinamico();
 
-  // 2. Sistema de Notificações Toast Global
-  configurarSistemaToast();
-
-  // 3. Gerenciamento do Modal de Nova Movimentação
-  configurarModalMovimentacao();
-
-  // 4. Navegação SPA entre Abas / Seções
+  // 2. Configura a navegação SPA entre as 4 seções
   configurarNavegacaoSPA();
 
-  // 5. Menu Responsivo Mobile (Hambúrguer)
+  // 3. Configura o modal de nova movimentação
+  configurarModal();
+
+  // 4. Configura o menu hambúrguer para celular
   configurarMenuMobile();
 
-  // 6. Inicialização dos Módulos Específicos
-  inicializarModulos();
+  // 5. Inicializa os módulos e renderiza as telas com dados em memória
+  inicializarMovimentacoes();
+  inicializarRelatorios();
+  renderizarDashboard();
+  renderizarPlanejamento();
 });
 
 /**
- * Atualiza a saudação ("Bom dia", "Boa tarde", "Boa noite") e a data atual formatada
+ * Semana 11 e 12: Atualiza a saudação ("Bom dia, Arnaldo!", etc.) e a data atual formatada
  */
 function atualizarCabecalhoDinamico() {
-  const elementoSaudacao = document.getElementById('texto-saudacao');
-  const elementoData = document.getElementById('data-atual');
+  const elSaudacao = document.getElementById('texto-saudacao');
+  const elData = document.getElementById('data-atual');
 
   const agora = new Date();
   const hora = agora.getHours();
 
-  let saudacao = 'Olá, Alex!';
+  // Semana 12: Condicionais if / else if / else
+  let saudacao = 'Olá, Arnaldo!';
   if (hora >= 5 && hora < 12) {
-    saudacao = 'Bom dia, Alex!';
+    saudacao = 'Bom dia, Arnaldo!';
   } else if (hora >= 12 && hora < 18) {
-    saudacao = 'Boa tarde, Alex!';
+    saudacao = 'Boa tarde, Arnaldo!';
   } else {
-    saudacao = 'Boa noite, Alex!';
+    saudacao = 'Boa noite, Arnaldo!';
   }
 
-  if (elementoSaudacao) {
-    elementoSaudacao.textContent = saudacao;
+  if (elSaudacao) {
+    elSaudacao.textContent = saudacao;
   }
 
-  if (elementoData) {
+  if (elData) {
     const opcoes = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
     const dataFormatada = agora.toLocaleDateString('pt-BR', opcoes);
-    // Capitaliza primeira letra
-    elementoData.textContent = dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
+    elData.textContent = dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
   }
 }
 
 /**
- * Cria o sistema global de toasts (mensagens flutuantes de sucesso/erro)
+ * Semana 11 e 13: Controle da navegação SPA (alterna classes .ativa e .ativo sem recarregar a página)
  */
-function configurarSistemaToast() {
-  const containerToast = document.getElementById('container-toast');
-  if (!containerToast) return;
+function configurarNavegacaoSPA() {
+  const links = document.querySelectorAll('.nav-link');
+  const secoes = document.querySelectorAll('.secao-conteudo');
 
-  window.mostrarToast = function(tipo, mensagem) {
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${tipo}`;
+  for (let i = 0; i < links.length; i++) {
+    links[i].addEventListener('click', function(evento) {
+      evento.preventDefault();
+      const secaoAlvo = links[i].getAttribute('data-secao');
+      if (!secaoAlvo) return;
 
-    const icone = document.createElement('span');
-    icone.className = 'toast-icone';
-    icone.textContent = tipo === 'sucesso' ? '✓' : '⚠️';
+      // 1. Atualiza as seções visíveis
+      for (let j = 0; j < secoes.length; j++) {
+        if (secoes[j].id === secaoAlvo) {
+          secoes[j].classList.add('ativa');
+        } else {
+          secoes[j].classList.remove('ativa');
+        }
+      }
 
-    const texto = document.createElement('span');
-    texto.className = 'toast-mensagem';
-    texto.textContent = mensagem;
+      // 2. Atualiza o destaque no link da sidebar
+      for (let k = 0; k < links.length; k++) {
+        if (links[k].getAttribute('data-secao') === secaoAlvo) {
+          links[k].classList.add('ativo');
+        } else {
+          links[k].classList.remove('ativo');
+        }
+      }
 
-    toast.append(icone, texto);
-    containerToast.append(toast);
+      // 3. Fecha a sidebar no mobile se estiver aberta
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.getElementById('overlay-sidebar');
+      if (sidebar && sidebar.classList.contains('aberta-mobile')) {
+        sidebar.classList.remove('aberta-mobile');
+        if (overlay) overlay.classList.remove('ativo');
+      }
 
-    // Animação de entrada
-    setTimeout(() => {
-      toast.classList.add('visivel');
-    }, 10);
-
-    // Remove após 3.5 segundos
-    setTimeout(() => {
-      toast.classList.remove('visivel');
-      setTimeout(() => {
-        toast.remove();
-      }, 300);
-    }, 3500);
-  };
+      // 4. Rola suavemente para o topo da tela
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
 }
 
 /**
- * Controla abertura, fechamento e tecla ESC do modal de cadastro
+ * Semana 11: Controla a abertura, fechamento e tecla ESC do modal de cadastro
  */
-function configurarModalMovimentacao() {
+function configurarModal() {
   const modal = document.getElementById('modal-movimentacao');
-  const btnAbrirModal = document.getElementById('btn-abrir-modal');
-  const btnFecharModal = document.getElementById('btn-fechar-modal');
-  const btnCancelarModal = document.getElementById('btn-cancelar-modal');
+  const btnAbrir = document.getElementById('btn-abrir-modal');
+  const btnFechar = document.getElementById('btn-fechar-modal');
+  const btnCancelar = document.getElementById('btn-cancelar-modal');
   const inputDataModal = document.getElementById('modal-data');
 
-  const abrirModal = () => {
+  function abrirModal() {
     if (!modal) return;
     modal.classList.add('aberto');
     modal.setAttribute('aria-hidden', 'false');
-    // Preenche data padrão como hoje se vazio
+
     if (inputDataModal && !inputDataModal.value) {
       inputDataModal.value = new Date().toISOString().split('T')[0];
     }
-    // Foco no primeiro input
-    const primeiroInput = modal.querySelector('input[name="descricao"]');
-    if (primeiroInput) primeiroInput.focus();
-  };
 
-  const fecharModal = () => {
+    const primeiroInput = modal.querySelector('input[name="descricao"]');
+    if (primeiroInput) {
+      primeiroInput.focus();
+    }
+  }
+
+  function fecharModal() {
     if (!modal) return;
     modal.classList.remove('aberto');
     modal.setAttribute('aria-hidden', 'true');
-  };
+  }
 
+  // Torna acessível globalmente
   window.abrirModalNovaMovimentacao = abrirModal;
   window.fecharModalNovaMovimentacao = fecharModal;
 
-  if (btnAbrirModal) btnAbrirModal.addEventListener('click', abrirModal);
-  if (btnFecharModal) btnFecharModal.addEventListener('click', fecharModal);
-  if (btnCancelarModal) btnCancelarModal.addEventListener('click', fecharModal);
+  if (btnAbrir) btnAbrir.addEventListener('click', abrirModal);
+  if (btnFechar) btnFechar.addEventListener('click', fecharModal);
+  if (btnCancelar) btnCancelar.addEventListener('click', fecharModal);
 
-  // Fecha clicando no backdrop
+  // Fecha clicando no fundo escuro (backdrop)
   if (modal) {
-    modal.addEventListener('click', (evento) => {
+    modal.addEventListener('click', function(evento) {
       if (evento.target === modal) {
         fecharModal();
       }
     });
   }
 
-  // Tecla ESC para fechar
-  document.addEventListener('keydown', (evento) => {
+  // Fecha ao pressionar a tecla Escape
+  document.addEventListener('keydown', function(evento) {
     if (evento.key === 'Escape' && modal && modal.classList.contains('aberto')) {
       fecharModal();
     }
@@ -155,50 +163,7 @@ function configurarModalMovimentacao() {
 }
 
 /**
- * Controla a navegação SPA entre as 4 seções principais
- */
-function configurarNavegacaoSPA() {
-  const linksNavegacao = document.querySelectorAll('.nav-link, .nav-item-mobile');
-  const secoes = document.querySelectorAll('.secao-conteudo');
-
-  linksNavegacao.forEach(link => {
-    link.addEventListener('click', (evento) => {
-      evento.preventDefault();
-      const secaoAlvo = link.getAttribute('data-secao');
-      if (!secaoAlvo) return;
-
-      // Atualiza abas ativas
-      secoes.forEach(secao => {
-        if (secao.id === secaoAlvo) {
-          secao.classList.add('ativa');
-        } else {
-          secao.classList.remove('ativa');
-        }
-      });
-
-      // Atualiza estilo dos links
-      linksNavegacao.forEach(l => {
-        if (l.getAttribute('data-secao') === secaoAlvo) {
-          l.classList.add('ativo');
-        } else {
-          l.classList.remove('ativo');
-        }
-      });
-
-      // Fecha gaveta mobile se estiver aberta
-      const sidebar = document.querySelector('.sidebar');
-      if (sidebar && sidebar.classList.contains('aberta-mobile')) {
-        sidebar.classList.remove('aberta-mobile');
-      }
-
-      // Rola para o topo do conteúdo suavemente
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  });
-}
-
-/**
- * Configura o botão hambúrguer do menu mobile
+ * Semana 11: Abre e fecha a gaveta lateral em dispositivos móveis
  */
 function configurarMenuMobile() {
   const btnHamburguer = document.getElementById('btn-hamburguer');
@@ -206,14 +171,14 @@ function configurarMenuMobile() {
   const overlay = document.getElementById('overlay-sidebar');
 
   if (btnHamburguer && sidebar) {
-    btnHamburguer.addEventListener('click', () => {
+    btnHamburguer.addEventListener('click', function() {
       sidebar.classList.toggle('aberta-mobile');
       if (overlay) overlay.classList.toggle('ativo');
     });
   }
 
   if (overlay && sidebar) {
-    overlay.addEventListener('click', () => {
+    overlay.addEventListener('click', function() {
       sidebar.classList.remove('aberta-mobile');
       overlay.classList.remove('ativo');
     });
@@ -221,50 +186,40 @@ function configurarMenuMobile() {
 }
 
 /**
- * Inicializa todos os módulos com as referências corretas aos elementos do DOM
+ * Semana 11: Sistema de notificações flutuantes (Toasts) para feedback ao usuário
  */
-function inicializarModulos() {
-  // 1. Dashboard
-  inicializarDashboard({
-    kpiSaldo: document.getElementById('kpi-saldo-valor'),
-    kpiReceitas: document.getElementById('kpi-receitas-valor'),
-    kpiDespesas: document.getElementById('kpi-despesas-valor'),
-    kpiResultado: document.getElementById('kpi-resultado-valor'),
-    kpiTaxaPoupanca: document.getElementById('kpi-taxa-poupanca'),
-    containerComparativo: document.getElementById('painel-comparativo-dados'),
-    containerCategorias: document.getElementById('painel-categorias-dados'),
-    containerEvolucao: document.getElementById('painel-evolucao-dados'),
-    containerRecentes: document.getElementById('lista-recentes-dashboard')
-  });
+function exibirToast(tipo, mensagem) {
+  const container = document.getElementById('container-toast');
+  if (!container) return;
 
-  // 2. Movimentações
-  inicializarMovimentacoes({
-    formCadastro: document.getElementById('form-cadastro-inline'),
-    formModalCadastro: document.getElementById('form-modal-movimentacao'),
-    selectTipoForm: document.getElementById('inline-tipo'),
-    selectCategoriaForm: document.getElementById('inline-categoria'),
-    selectTipoModal: document.getElementById('modal-tipo'),
-    selectCategoriaModal: document.getElementById('modal-categoria'),
-    tbodyTabela: document.getElementById('tbody-movimentacoes'),
-    contadorRegistros: document.getElementById('contador-registros'),
-    inputBusca: document.getElementById('busca-movimentacoes'),
-    selectFiltroTipo: document.getElementById('filtro-tipo'),
-    selectFiltroCategoria: document.getElementById('filtro-categoria'),
-    selectOrdenacao: document.getElementById('ordenacao-movimentacoes'),
-    btnLimparFiltros: document.getElementById('btn-limpar-filtros')
-  });
+  const toast = document.createElement('div');
+  toast.className = 'toast toast-' + tipo;
 
-  // 3. Planejamento
-  inicializarPlanejamento({
-    containerResumoPlanejamento: document.getElementById('resumo-planejamento'),
-    containerCardsPlanejamento: document.getElementById('grid-planejamento')
-  });
+  const icone = document.createElement('span');
+  icone.className = 'toast-icone';
+  icone.textContent = (tipo === 'sucesso') ? '✓' : '⚠️';
 
-  // 4. Relatórios
-  inicializarRelatorios({
-    selectFiltroPeriodo: document.getElementById('filtro-periodo-relatorio'),
-    containerMetricasRelatorio: document.getElementById('metricas-relatorio'),
-    containerRankingGastos: document.getElementById('ranking-gastos-relatorio'),
-    tbodyAnaliticoRelatorios: document.getElementById('tbody-relatorios-analitico')
-  });
+  const texto = document.createElement('span');
+  texto.className = 'toast-mensagem';
+  texto.textContent = mensagem;
+
+  toast.appendChild(icone);
+  toast.appendChild(texto);
+  container.appendChild(toast);
+
+  // Mostra com transição
+  setTimeout(function() {
+    toast.classList.add('visivel');
+  }, 10);
+
+  // Remove automaticamente após 3 segundos
+  setTimeout(function() {
+    toast.classList.remove('visivel');
+    setTimeout(function() {
+      toast.remove();
+    }, 300);
+  }, 3000);
 }
+
+// Compatibilidade global
+window.mostrarToast = exibirToast;

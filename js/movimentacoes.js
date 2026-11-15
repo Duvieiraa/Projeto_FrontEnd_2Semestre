@@ -1,28 +1,16 @@
 /**
  * movimentacoes.js - Finanças Pessoais
- * Módulo de gerenciamento de movimentações: cadastro, listagem, exclusão,
- * filtros múltiplos combinados, busca em tempo real e ordenação.
+ * Módulo de Gerenciamento de Movimentações: Cadastro, Listagem, Filtros e Exclusão
+ * 
+ * Conteúdos aplicados do semestre:
+ * - Semana 9: Variáveis e tipos de dados.
+ * - Semana 11: Manipulação do DOM (createElement, appendChild, textContent, addEventListener).
+ * - Semana 12: Operadores lógicos (&&, ||, ===) e estruturas condicionais (if / else).
+ * - Semana 13: Estruturas de repetição (for), Arrays de objetos e persistência.
  */
 
-import {
-  obterMovimentacoes,
-  adicionarMovimentacao,
-  removerMovimentacao,
-  formatarMoeda,
-  formatarData,
-  CATEGORIAS_RECEITA,
-  CATEGORIAS_DESPESA,
-  inscreverAtualizacao
-} from './data.js';
-
-import {
-  validarFormularioMovimentacao,
-  limparTodosErros,
-  configurarLimpezaErrosEmTempoReal
-} from './validacoes.js';
-
-// Estado local dos filtros e ordenação
-const filtros = {
+// Objeto de estado dos filtros ativos
+const estadoFiltros = {
   busca: '',
   tipo: 'todos',
   categoria: 'todas',
@@ -30,97 +18,121 @@ const filtros = {
 };
 
 /**
- * Atualiza o <select> de categorias com base no tipo selecionado (Receita ou Despesa)
- * @param {HTMLSelectElement} selectElement 
- * @param {string} tipo 
+ * Semana 11: Atualiza dinamicamente as opções do select de categorias de acordo com o tipo escolhido
  */
-export function atualizarCategoriasSelect(selectElement, tipo) {
+function atualizarSelectCategorias(selectElement, tipo) {
   if (!selectElement) return;
 
   selectElement.innerHTML = '';
-  
+
   const opcaoPadrao = document.createElement('option');
   opcaoPadrao.value = '';
   opcaoPadrao.textContent = 'Selecione uma categoria';
-  selectElement.append(opcaoPadrao);
+  selectElement.appendChild(opcaoPadrao);
 
-  const categorias = tipo === 'receita' ? CATEGORIAS_RECEITA : CATEGORIAS_DESPESA;
+  const categorias = (tipo === 'receita') ? CATEGORIAS_RECEITA : CATEGORIAS_DESPESA;
 
-  categorias.forEach(cat => {
-    const option = document.createElement('option');
-    option.value = cat;
-    option.textContent = cat;
-    selectElement.append(option);
-  });
+  for (let i = 0; i < categorias.length; i++) {
+    const opt = document.createElement('option');
+    opt.value = categorias[i];
+    opt.textContent = categorias[i];
+    selectElement.appendChild(opt);
+  }
 }
 
 /**
- * Atualiza as opções do filtro de categorias da tela de movimentações
- * @param {HTMLSelectElement} selectFiltro 
+ * Semana 11 e 13: Preenche o select do filtro de categorias com todas as categorias disponíveis
  */
-export function atualizarFiltroCategorias(selectFiltro) {
+function popularFiltroCategorias(selectFiltro) {
   if (!selectFiltro) return;
 
-  const valorAtual = selectFiltro.value;
+  const valorSelecionado = selectFiltro.value;
   selectFiltro.innerHTML = '';
 
-  const opcaoTodas = document.createElement('option');
-  opcaoTodas.value = 'todas';
-  opcaoTodas.textContent = 'Todas as categorias';
-  selectFiltro.append(opcaoTodas);
+  const optTodas = document.createElement('option');
+  optTodas.value = 'todas';
+  optTodas.textContent = 'Todas as categorias';
+  selectFiltro.appendChild(optTodas);
 
-  // Reúne todas as categorias únicas de receita e despesa
-  const todasCategorias = [...new Set([...CATEGORIAS_RECEITA, ...CATEGORIAS_DESPESA])].sort();
-
-  todasCategorias.forEach(cat => {
-    const opt = document.createElement('option');
-    opt.value = cat;
-    opt.textContent = cat;
-    selectFiltro.append(opt);
-  });
-
-  if (todasCategorias.includes(valorAtual) || valorAtual === 'todas') {
-    selectFiltro.value = valorAtual;
+  // Une as categorias sem repetição
+  const todasCategorias = [];
+  for (let i = 0; i < CATEGORIAS_RECEITA.length; i++) {
+    todasCategorias.push(CATEGORIAS_RECEITA[i]);
   }
+  for (let i = 0; i < CATEGORIAS_DESPESA.length; i++) {
+    let jaExiste = false;
+    for (let j = 0; j < todasCategorias.length; j++) {
+      if (todasCategorias[j] === CATEGORIAS_DESPESA[i]) {
+        jaExiste = true;
+        break;
+      }
+    }
+    if (!jaExiste) {
+      todasCategorias.push(CATEGORIAS_DESPESA[i]);
+    }
+  }
+
+  // Ordena alfabeticamente
+  todasCategorias.sort();
+
+  for (let i = 0; i < todasCategorias.length; i++) {
+    const opt = document.createElement('option');
+    opt.value = todasCategorias[i];
+    opt.textContent = todasCategorias[i];
+    selectFiltro.appendChild(opt);
+  }
+
+  selectFiltro.value = valorSelecionado || 'todas';
 }
 
 /**
- * Aplica os filtros de busca, tipo, categoria e ordenação aos dados
- * @returns {Array} Array filtrado e ordenado de movimentações
+ * Semana 12 e 13: Aplica os filtros e ordenação usando loops e operadores lógicos
  */
-export function filtrarMovimentacoes() {
-  let resultado = obterMovimentacoes();
+function filtrarEOrdenarMovimentacoes() {
+  const todas = obterMovimentacoes();
+  const resultado = [];
 
-  // 1. Filtro por Busca na Descrição
-  if (filtros.busca.trim() !== '') {
-    const termo = filtros.busca.toLowerCase().trim();
-    resultado = resultado.filter(item => 
-      item.descricao.toLowerCase().includes(termo)
-    );
-  }
+  const buscaMinuscula = estadoFiltros.busca.trim().toLowerCase();
 
-  // 2. Filtro por Tipo (Receita / Despesa)
-  if (filtros.tipo !== 'todos') {
-    resultado = resultado.filter(item => item.tipo === filtros.tipo);
-  }
+  for (let i = 0; i < todas.length; i++) {
+    const item = todas[i];
+    let passaFiltro = true;
 
-  // 3. Filtro por Categoria
-  if (filtros.categoria !== 'todas') {
-    resultado = resultado.filter(item => item.categoria === filtros.categoria);
+    // 1. Filtro por Busca na Descrição (Semana 12: operadores lógicos)
+    if (buscaMinuscula.length > 0) {
+      if (item.descricao.toLowerCase().indexOf(buscaMinuscula) === -1) {
+        passaFiltro = false;
+      }
+    }
+
+    // 2. Filtro por Tipo (Receita / Despesa)
+    if (passaFiltro && estadoFiltros.tipo !== 'todos') {
+      if (item.tipo !== estadoFiltros.tipo) {
+        passaFiltro = false;
+      }
+    }
+
+    // 3. Filtro por Categoria
+    if (passaFiltro && estadoFiltros.categoria !== 'todas') {
+      if (item.categoria !== estadoFiltros.categoria) {
+        passaFiltro = false;
+      }
+    }
+
+    if (passaFiltro) {
+      resultado.push(item);
+    }
   }
 
   // 4. Ordenação
-  resultado.sort((a, b) => {
-    if (filtros.ordenacao === 'data-desc') {
+  resultado.sort(function(a, b) {
+    if (estadoFiltros.ordenacao === 'data-desc') {
       return new Date(b.data) - new Date(a.data);
-    }
-    if (filtros.ordenacao === 'data-asc') {
+    } else if (estadoFiltros.ordenacao === 'data-asc') {
       return new Date(a.data) - new Date(b.data);
-    }
-    if (filtros.ordenacao === 'valor-desc') {
+    } else if (estadoFiltros.ordenacao === 'valor-desc') {
       return b.valor - a.valor;
-    }
-    if (filtros.ordenacao === 'valor-asc') {
+    } else if (estadoFiltros.ordenacao === 'valor-asc') {
       return a.valor - b.valor;
     }
     return 0;
@@ -130,92 +142,91 @@ export function filtrarMovimentacoes() {
 }
 
 /**
- * Renderiza a lista de movimentações no elemento tbody da tabela com DOM seguro
- * @param {HTMLElement} tbodyElement 
- * @param {HTMLElement} contadorElement 
+ * Semana 11: Renderiza as movimentações na tabela do DOM com createElement e textContent
  */
-export function renderizarTabela(tbodyElement, contadorElement) {
-  if (!tbodyElement) return;
+function renderizarTabelaMovimentacoes() {
+  const tbody = document.getElementById('tbody-movimentacoes');
+  const contador = document.getElementById('contador-registros');
+  if (!tbody) return;
 
-  const listaFiltrada = filtrarMovimentacoes();
+  const lista = filtrarEOrdenarMovimentacoes();
 
-  if (contadorElement) {
-    contadorElement.textContent = `${listaFiltrada.length} ${listaFiltrada.length === 1 ? 'registro' : 'registros'}`;
+  if (contador) {
+    contador.textContent = lista.length + (lista.length === 1 ? ' registro' : ' registros');
   }
 
-  tbodyElement.innerHTML = '';
+  tbody.innerHTML = '';
 
-  if (listaFiltrada.length === 0) {
-    const trVazio = document.createElement('tr');
-    trVazio.className = 'linha-vazia';
+  // Caso não existam itens
+  if (lista.length === 0) {
+    const trVazia = document.createElement('tr');
+    trVazia.className = 'linha-vazia';
 
-    const tdVazio = document.createElement('td');
-    tdVazio.colSpan = 6;
-    tdVazio.className = 'td-vazio';
+    const tdVazia = document.createElement('td');
+    tdVazia.colSpan = 6;
+    tdVazia.className = 'td-vazio';
 
-    const mensagemVazia = document.createElement('div');
-    mensagemVazia.className = 'estado-vazio';
+    const estadoVazio = document.createElement('div');
+    estadoVazio.className = 'estado-vazio';
 
     const icone = document.createElement('span');
     icone.className = 'estado-vazio-icone';
     icone.textContent = '🔍';
 
     const texto = document.createElement('p');
-    texto.textContent = 'Nenhuma movimentação encontrada para os filtros aplicados.';
+    texto.textContent = 'Nenhuma movimentação encontrada com os filtros selecionados.';
 
-    mensagemVazia.append(icone, texto);
-    tdVazio.append(mensagemVazia);
-    trVazio.append(tdVazio);
-    tbodyElement.append(trVazio);
+    estadoVazio.appendChild(icone);
+    estadoVazio.appendChild(texto);
+    tdVazia.appendChild(estadoVazio);
+    trVazia.appendChild(tdVazia);
+    tbody.appendChild(trVazia);
     return;
   }
 
-  listaFiltrada.forEach(item => {
+  // Renderiza cada item da lista (Semana 11 e 13: manipulação do DOM e objetos)
+  for (let i = 0; i < lista.length; i++) {
+    const item = lista[i];
     const tr = document.createElement('tr');
     tr.className = 'linha-movimentacao';
 
     // Coluna 1: Data
     const tdData = document.createElement('td');
-    tdData.className = 'col-data';
     tdData.textContent = formatarData(item.data);
 
-    // Coluna 2: Descrição
-    const tdDescricao = document.createElement('td');
-    tdDescricao.className = 'col-descricao';
+    // Coluna 2: Descrição (uso estrito de textContent contra XSS)
+    const tdDesc = document.createElement('td');
     const strongDesc = document.createElement('strong');
     strongDesc.textContent = item.descricao;
-    tdDescricao.append(strongDesc);
+    tdDesc.appendChild(strongDesc);
 
     // Coluna 3: Categoria
-    const tdCategoria = document.createElement('td');
-    tdCategoria.className = 'col-categoria';
-    const badgeCategoria = document.createElement('span');
-    badgeCategoria.className = 'badge-categoria';
-    badgeCategoria.textContent = item.categoria;
-    tdCategoria.append(badgeCategoria);
+    const tdCat = document.createElement('td');
+    const badgeCat = document.createElement('span');
+    badgeCat.className = 'badge-categoria';
+    badgeCat.textContent = item.categoria;
+    tdCat.appendChild(badgeCat);
 
-    // Coluna 4: Tipo (Badge verde/coral)
+    // Coluna 4: Tipo (Badge visual)
     const tdTipo = document.createElement('td');
-    tdTipo.className = 'col-tipo';
     const badgeTipo = document.createElement('span');
-    badgeTipo.className = `badge-tipo badge-${item.tipo}`;
+    badgeTipo.className = 'badge-tipo ' + (item.tipo === 'receita' ? 'badge-receita' : 'badge-despesa');
     badgeTipo.textContent = item.tipo === 'receita' ? 'Receita' : 'Despesa';
-    tdTipo.append(badgeTipo);
+    tdTipo.appendChild(badgeTipo);
 
     // Coluna 5: Valor
     const tdValor = document.createElement('td');
-    tdValor.className = `col-valor ${item.tipo === 'receita' ? 'valor-positivo' : 'valor-negativo'}`;
+    tdValor.className = 'col-valor ' + (item.tipo === 'receita' ? 'valor-positivo' : 'valor-negativo');
     const prefixo = item.tipo === 'receita' ? '+ ' : '- ';
     tdValor.textContent = prefixo + formatarMoeda(item.valor);
 
     // Coluna 6: Ações (Botão Excluir)
     const tdAcoes = document.createElement('td');
-    tdAcoes.className = 'col-acoes';
+    tdAcoes.style.textAlign = 'right';
 
     const btnExcluir = document.createElement('button');
     btnExcluir.type = 'button';
     btnExcluir.className = 'btn-acao btn-excluir';
-    btnExcluir.setAttribute('aria-label', `Excluir ${item.descricao}`);
     btnExcluir.title = 'Excluir movimentação';
     btnExcluir.innerHTML = `
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -225,177 +236,164 @@ export function renderizarTabela(tbodyElement, contadorElement) {
       </svg>
     `;
 
-    btnExcluir.addEventListener('click', () => {
-      const confirmacao = window.confirm(`Deseja realmente excluir a movimentação "${item.descricao}" no valor de ${formatarMoeda(item.valor)}?`);
-      if (confirmacao) {
+    // Semana 11: Evento de clique para exclusão
+    btnExcluir.addEventListener('click', function() {
+      const confirmou = window.confirm('Deseja realmente excluir "' + item.descricao + '" no valor de ' + formatarMoeda(item.valor) + '?');
+      if (confirmou) {
         removerMovimentacao(item.id);
-        if (typeof window.mostrarToast === 'function') {
-          window.mostrarToast('sucesso', 'Movimentação excluída com sucesso!');
+        if (typeof exibirToast === 'function') {
+          exibirToast('sucesso', 'Movimentação excluída com sucesso!');
         }
       }
     });
 
-    tdAcoes.append(btnExcluir);
+    tdAcoes.appendChild(btnExcluir);
 
-    // Monta a linha
-    tr.append(tdData, tdDescricao, tdCategoria, tdTipo, tdValor, tdAcoes);
-    tbodyElement.append(tr);
+    // Adiciona as colunas na linha
+    tr.appendChild(tdData);
+    tr.appendChild(tdDesc);
+    tr.appendChild(tdCat);
+    tr.appendChild(tdTipo);
+    tr.appendChild(tdValor);
+    tr.appendChild(tdAcoes);
+
+    tbody.appendChild(tr);
+  }
+}
+
+/**
+ * Semana 11: Configura o envio de um formulário de cadastro (inline ou modal)
+ */
+function configurarFormularioCadastro(formElement) {
+  if (!formElement) return;
+
+  const selectTipo = formElement.querySelector('[name="tipo"]');
+  const selectCat = formElement.querySelector('[name="categoria"]');
+
+  if (selectTipo && selectCat) {
+    atualizarSelectCategorias(selectCat, selectTipo.value || 'receita');
+    selectTipo.addEventListener('change', function() {
+      atualizarSelectCategorias(selectCat, selectTipo.value);
+    });
+  }
+
+  // Preenche a data de hoje por padrão
+  const inputData = formElement.querySelector('[name="data"]');
+  if (inputData && !inputData.value) {
+    inputData.value = new Date().toISOString().split('T')[0];
+  }
+
+  // Configura limpeza dos erros em tempo real
+  configurarLimpezaErrosEmTempoReal(formElement);
+
+  // Evento submit do formulário
+  formElement.addEventListener('submit', function(evento) {
+    evento.preventDefault();
+
+    const dados = {
+      descricao: formElement.querySelector('[name="descricao"]').value,
+      valor: formElement.querySelector('[name="valor"]').value,
+      tipo: formElement.querySelector('[name="tipo"]').value,
+      categoria: formElement.querySelector('[name="categoria"]').value,
+      data: formElement.querySelector('[name="data"]').value
+    };
+
+    // Valida os dados antes de cadastrar
+    const valido = validarFormularioMovimentacao(dados, formElement);
+    if (!valido) {
+      if (typeof exibirToast === 'function') {
+        exibirToast('erro', 'Por favor, preencha os campos obrigatórios corretamente.');
+      }
+      return;
+    }
+
+    // Adiciona a movimentação em memória
+    adicionarMovimentacao(dados);
+
+    // Limpa o formulário
+    formElement.reset();
+    limparTodosOsErros(formElement);
+
+    if (selectTipo && selectCat) {
+      atualizarSelectCategorias(selectCat, selectTipo.value || 'receita');
+    }
+    if (inputData) {
+      inputData.value = new Date().toISOString().split('T')[0];
+    }
+
+    // Se for o formulário do modal, fecha o modal
+    if (typeof fecharModalNovaMovimentacao === 'function') {
+      fecharModalNovaMovimentacao();
+    }
+
+    if (typeof exibirToast === 'function') {
+      exibirToast('sucesso', 'Movimentação cadastrada com sucesso!');
+    }
   });
 }
 
 /**
- * Inicializa os formulários e filtros de movimentações
- * @param {Object} elementos - Referências aos elementos do DOM
+ * Semana 11: Inicializa todos os ouvintes de eventos da tela de movimentações
  */
-export function inicializarMovimentacoes(elementos) {
-  const {
-    formCadastro,
-    formModalCadastro,
-    selectTipoForm,
-    selectCategoriaForm,
-    selectTipoModal,
-    selectCategoriaModal,
-    tbodyTabela,
-    contadorRegistros,
-    inputBusca,
-    selectFiltroTipo,
-    selectFiltroCategoria,
-    selectOrdenacao,
-    btnLimparFiltros
-  } = elementos;
+function inicializarMovimentacoes() {
+  const formInline = document.getElementById('form-cadastro-inline');
+  const formModal = document.getElementById('form-modal-movimentacao');
+  const inputBusca = document.getElementById('busca-movimentacoes');
+  const selectFiltroTipo = document.getElementById('filtro-tipo');
+  const selectFiltroCat = document.getElementById('filtro-categoria');
+  const selectOrdenacao = document.getElementById('ordenacao-movimentacoes');
+  const btnLimparFiltros = document.getElementById('btn-limpar-filtros');
 
-  // 1. Configurar selects dinâmicos do formulário embutido (se existir na tela)
-  if (selectTipoForm && selectCategoriaForm) {
-    atualizarCategoriasSelect(selectCategoriaForm, selectTipoForm.value || 'receita');
-    selectTipoForm.addEventListener('change', () => {
-      atualizarCategoriasSelect(selectCategoriaForm, selectTipoForm.value);
-    });
-  }
+  configurarFormularioCadastro(formInline);
+  configurarFormularioCadastro(formModal);
 
-  // 2. Configurar selects dinâmicos do modal
-  if (selectTipoModal && selectCategoriaModal) {
-    atualizarCategoriasSelect(selectCategoriaModal, selectTipoModal.value || 'receita');
-    selectTipoModal.addEventListener('change', () => {
-      atualizarCategoriasSelect(selectCategoriaModal, selectTipoModal.value);
-    });
-  }
+  popularFiltroCategorias(selectFiltroCat);
 
-  // 3. Ouvintes de eventos nos formulários de cadastro
-  const manipularEnvio = (form) => {
-    form.addEventListener('submit', (evento) => {
-      evento.preventDefault();
-
-      const formData = new FormData(form);
-      const dados = {
-        descricao: formData.get('descricao'),
-        valor: formData.get('valor'),
-        tipo: formData.get('tipo'),
-        categoria: formData.get('categoria'),
-        data: formData.get('data')
-      };
-
-      const valido = validarFormularioMovimentacao(dados, form);
-      if (!valido) {
-        if (typeof window.mostrarToast === 'function') {
-          window.mostrarToast('erro', 'Por favor, corrija os erros no formulário.');
-        }
-        return;
-      }
-
-      adicionarMovimentacao(dados);
-      form.reset();
-      limparTodosErros(form);
-
-      // Reconfigura categorias para o tipo padrão
-      const selectTipo = form.querySelector('[name="tipo"]');
-      const selectCat = form.querySelector('[name="categoria"]');
-      if (selectTipo && selectCat) {
-        atualizarCategoriasSelect(selectCat, selectTipo.value || 'receita');
-      }
-
-      // Preenche data de hoje no campo data
-      const inputData = form.querySelector('[name="data"]');
-      if (inputData) {
-        inputData.value = new Date().toISOString().split('T')[0];
-      }
-
-      // Fecha modal se o form for o modal
-      if (typeof window.fecharModalNovaMovimentacao === 'function') {
-        window.fecharModalNovaMovimentacao();
-      }
-
-      if (typeof window.mostrarToast === 'function') {
-        window.mostrarToast('sucesso', 'Movimentação cadastrada com sucesso!');
-      }
-    });
-
-    configurarLimpezaErrosEmTempoReal(form);
-  };
-
-  if (formCadastro) manipularEnvio(formCadastro);
-  if (formModalCadastro) manipularEnvio(formModalCadastro);
-
-  // 4. Filtros e Busca
-  if (selectFiltroCategoria) {
-    atualizarFiltroCategorias(selectFiltroCategoria);
-  }
-
-  const atualizarVisao = () => {
-    renderizarTabela(tbodyTabela, contadorRegistros);
-  };
-
+  // Eventos de Filtro e Busca em tempo real
   if (inputBusca) {
-    inputBusca.addEventListener('input', (e) => {
-      filtros.busca = e.target.value;
-      atualizarVisao();
+    inputBusca.addEventListener('input', function() {
+      estadoFiltros.busca = inputBusca.value;
+      renderizarTabelaMovimentacoes();
     });
   }
 
   if (selectFiltroTipo) {
-    selectFiltroTipo.addEventListener('change', (e) => {
-      filtros.tipo = e.target.value;
-      atualizarVisao();
+    selectFiltroTipo.addEventListener('change', function() {
+      estadoFiltros.tipo = selectFiltroTipo.value;
+      renderizarTabelaMovimentacoes();
     });
   }
 
-  if (selectFiltroCategoria) {
-    selectFiltroCategoria.addEventListener('change', (e) => {
-      filtros.categoria = e.target.value;
-      atualizarVisao();
+  if (selectFiltroCat) {
+    selectFiltroCat.addEventListener('change', function() {
+      estadoFiltros.categoria = selectFiltroCat.value;
+      renderizarTabelaMovimentacoes();
     });
   }
 
   if (selectOrdenacao) {
-    selectOrdenacao.addEventListener('change', (e) => {
-      filtros.ordenacao = e.target.value;
-      atualizarVisao();
+    selectOrdenacao.addEventListener('change', function() {
+      estadoFiltros.ordenacao = selectOrdenacao.value;
+      renderizarTabelaMovimentacoes();
     });
   }
 
   if (btnLimparFiltros) {
-    btnLimparFiltros.addEventListener('click', () => {
-      filtros.busca = '';
-      filtros.tipo = 'todos';
-      filtros.categoria = 'todas';
-      filtros.ordenacao = 'data-desc';
+    btnLimparFiltros.addEventListener('click', function() {
+      estadoFiltros.busca = '';
+      estadoFiltros.tipo = 'todos';
+      estadoFiltros.categoria = 'todas';
+      estadoFiltros.ordenacao = 'data-desc';
 
       if (inputBusca) inputBusca.value = '';
       if (selectFiltroTipo) selectFiltroTipo.value = 'todos';
-      if (selectFiltroCategoria) selectFiltroCategoria.value = 'todas';
+      if (selectFiltroCat) selectFiltroCat.value = 'todas';
       if (selectOrdenacao) selectOrdenacao.value = 'data-desc';
 
-      atualizarVisao();
+      renderizarTabelaMovimentacoes();
     });
   }
 
-  // Inscreve a tabela para re-renderizar caso haja alterações de dados
-  inscreverAtualizacao(() => {
-    atualizarVisao();
-    if (selectFiltroCategoria) {
-      atualizarFiltroCategorias(selectFiltroCategoria);
-    }
-  });
-
   // Render inicial
-  atualizarVisao();
+  renderizarTabelaMovimentacoes();
 }

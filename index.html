@@ -30,9 +30,11 @@
       </div>
 
       <div class="sidebar-usuario">
-        <div class="usuario-avatar" aria-hidden="true">AR</div>
+        <div class="usuario-avatar">
+          <img src="assets/img/arnaldo.svg" alt="Foto de perfil de Arnaldo">
+        </div>
         <div class="usuario-info">
-          <span class="usuario-nome">Alex Reed</span>
+          <span class="usuario-nome">Arnaldo</span>
           <span class="usuario-tipo">Conta Pessoal</span>
         </div>
       </div>
@@ -102,12 +104,16 @@
             </svg>
           </button>
           <div class="header-titulos">
-            <h1 class="header-saudacao" id="texto-saudacao">Olá, Alex!</h1>
+            <h1 class="header-saudacao" id="texto-saudacao">Olá, Arnaldo!</h1>
             <span class="header-data" id="data-atual">Carregando data...</span>
           </div>
         </div>
 
         <div class="header-direita">
+          <div class="badge-perfil-header">
+            <img src="assets/img/arnaldo.svg" alt="Arnaldo" class="avatar-header-img">
+            <span class="nome-header-usuario">Arnaldo</span>
+          </div>
           <button type="button" class="btn btn-primary" id="btn-abrir-modal">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -522,17 +528,13 @@
   <!-- Container de Notificações Toast -->
   <div class="toast-container" id="container-toast" aria-live="polite"></div>
 
-  <!-- Script Modular Principal -->
-  <script type="module" src="js/main.js"></script>
-
-  <!-- Aviso amigável caso o usuário/avaliador abra direto pelo arquivo sem servidor local -->
-  <script>
-    if (window.location.protocol === 'file:') {
-      const banner = document.createElement('div');
-      banner.style.cssText = 'background: #fef3c7; color: #92400e; padding: 12px 20px; text-align: center; font-size: 13.5px; border-bottom: 1px solid #f59e0b; position: sticky; top: 0; z-index: 9999; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif; box-shadow: 0 2px 8px rgba(0,0,0,0.06);';
-      banner.innerHTML = '💡 <strong>Dica de execução:</strong> Como este projeto acadêmico utiliza módulos ES6 nativos (<code>import/export</code>), navegadores modernos exigem execução via servidor local para evitar restrições de CORS. Recomendamos abrir com a extensão <strong>Live Server</strong> do VS Code ou executar <code>python -m http.server</code> no terminal.';
-      document.body.prepend(banner);
-    }
-  </script>
+  <!-- Scripts Modulares da Aplicação (Organizados por Funções e Responsabilidades) -->
+  <script src="js/data.js"></script>
+  <script src="js/validacoes.js"></script>
+  <script src="js/movimentacoes.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/planejamento.js"></script>
+  <script src="js/relatorios.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>

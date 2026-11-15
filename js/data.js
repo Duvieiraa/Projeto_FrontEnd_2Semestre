@@ -1,18 +1,22 @@
 /**
  * data.js - Finanças Pessoais
- * Gerenciamento centralizado do estado da aplicação em memória (Arrays e Objetos).
- * Sem persistência em localStorage ou banco de dados, atendendo aos requisitos acadêmicos.
+ * Módulo de Gerenciamento de Dados em Memória (Sem localStorage)
+ * 
+ * Conteúdos aplicados do semestre:
+ * - Semana 9: Variáveis (let, const), tipos de dados primitivos.
+ * - Semana 12: Operadores lógicos e estruturas condicionais (if / else).
+ * - Semana 13: Estruturas de repetição (for, for...of), Arrays e Objetos em memória.
  */
 
-// Categorias permitidas para Receitas e Despesas
-export const CATEGORIAS_RECEITA = [
+// Categorias padrão de Receitas e Despesas (Semana 13 - Arrays)
+const CATEGORIAS_RECEITA = [
   'Salário',
   'Renda extra',
   'Investimentos',
   'Outros'
 ];
 
-export const CATEGORIAS_DESPESA = [
+const CATEGORIAS_DESPESA = [
   'Alimentação',
   'Moradia',
   'Transporte',
@@ -23,278 +27,236 @@ export const CATEGORIAS_DESPESA = [
   'Outros'
 ];
 
-// Dados iniciais de demonstração (em memória)
-let movimentacoes = [
-  {
-    id: 1,
-    descricao: 'Salário Mensal',
-    valor: 3000.00,
-    tipo: 'receita',
-    categoria: 'Salário',
-    data: '2026-11-05'
-  },
-  {
-    id: 2,
-    descricao: 'Renda extra - Projeto Freelance',
-    valor: 500.00,
-    tipo: 'receita',
-    categoria: 'Renda extra',
-    data: '2026-11-08'
-  },
-  {
-    id: 3,
-    descricao: 'Rendimentos de Investimentos',
-    valor: 180.00,
-    tipo: 'receita',
-    categoria: 'Investimentos',
-    data: '2026-11-02'
-  },
-  {
-    id: 4,
-    descricao: 'Aluguel do Apartamento',
-    valor: 1000.00,
-    tipo: 'despesa',
-    categoria: 'Moradia',
-    data: '2026-11-03'
-  },
-  {
-    id: 5,
-    descricao: 'Supermercado Mensal',
-    valor: 450.00,
-    tipo: 'despesa',
-    categoria: 'Alimentação',
-    data: '2026-11-04'
-  },
-  {
-    id: 6,
-    descricao: 'Combustível e Transporte Público',
-    valor: 200.00,
-    tipo: 'despesa',
-    categoria: 'Transporte',
-    data: '2026-11-06'
-  },
-  {
-    id: 7,
-    descricao: 'Internet Fibra Óptica',
-    valor: 100.00,
-    tipo: 'despesa',
-    categoria: 'Moradia',
-    data: '2026-11-07'
-  },
-  {
-    id: 8,
-    descricao: 'Cinema e Jantar com Amigos',
-    valor: 150.00,
-    tipo: 'despesa',
-    categoria: 'Lazer',
-    data: '2026-11-09'
-  },
-  {
-    id: 9,
-    descricao: 'Farmácia e Medicamentos',
-    valor: 85.00,
-    tipo: 'despesa',
-    categoria: 'Saúde',
-    data: '2026-11-10'
-  },
-  {
-    id: 10,
-    descricao: 'Mensalidade Curso de Idiomas',
-    valor: 160.00,
-    tipo: 'despesa',
-    categoria: 'Educação',
-    data: '2026-11-01'
-  }
+// Dados iniciais de demonstração em memória
+const DADOS_INICIAIS = [
+  { id: 1, descricao: 'Salário Mensal', valor: 3000.00, tipo: 'receita', categoria: 'Salário', data: '2026-11-05' },
+  { id: 2, descricao: 'Renda extra - Projeto Freelance', valor: 500.00, tipo: 'receita', categoria: 'Renda extra', data: '2026-11-08' },
+  { id: 3, descricao: 'Rendimentos de Investimentos', valor: 180.00, tipo: 'receita', categoria: 'Investimentos', data: '2026-11-02' },
+  { id: 4, descricao: 'Aluguel do Apartamento', valor: 1000.00, tipo: 'despesa', categoria: 'Moradia', data: '2026-11-03' },
+  { id: 5, descricao: 'Supermercado Mensal', valor: 450.00, tipo: 'despesa', categoria: 'Alimentação', data: '2026-11-04' },
+  { id: 6, descricao: 'Combustível e Metrô', valor: 200.00, tipo: 'despesa', categoria: 'Transporte', data: '2026-11-06' },
+  { id: 7, descricao: 'Internet Fibra Óptica', valor: 100.00, tipo: 'despesa', categoria: 'Moradia', data: '2026-11-07' },
+  { id: 8, descricao: 'Cinema e Jantar com Amigos', valor: 150.00, tipo: 'despesa', categoria: 'Lazer', data: '2026-11-09' },
+  { id: 9, descricao: 'Farmácia e Medicamentos', valor: 85.00, tipo: 'despesa', categoria: 'Saúde', data: '2026-11-10' },
+  { id: 10, descricao: 'Mensalidade Curso de Idiomas', valor: 160.00, tipo: 'despesa', categoria: 'Educação', data: '2026-11-01' }
 ];
 
-// Limites mensais pré-configurados para o Planejamento de Gastos
-let orcamentos = [
-  { categoria: 'Alimentação', limite: 700.00, icone: 'utensils' },
-  { categoria: 'Moradia', limite: 1300.00, icone: 'home' },
-  { categoria: 'Transporte', limite: 350.00, icone: 'car' },
-  { categoria: 'Saúde', limite: 250.00, icone: 'heart-pulse' },
-  { categoria: 'Educação', limite: 300.00, icone: 'book' },
-  { categoria: 'Lazer', limite: 250.00, icone: 'smile' },
-  { categoria: 'Compras', limite: 400.00, icone: 'shopping-bag' },
-  { categoria: 'Outros', limite: 200.00, icone: 'tag' }
+// Orçamentos e limites padrão por categoria em memória
+const ORCAMENTOS_INICIAIS = [
+  { categoria: 'Alimentação', limite: 700.00 },
+  { categoria: 'Moradia', limite: 1300.00 },
+  { categoria: 'Transporte', limite: 350.00 },
+  { categoria: 'Saúde', limite: 250.00 },
+  { categoria: 'Educação', limite: 300.00 },
+  { categoria: 'Lazer', limite: 250.00 },
+  { categoria: 'Compras', limite: 400.00 },
+  { categoria: 'Outros', limite: 200.00 }
 ];
 
-// Lista de funções ouvintes para atualizar a interface quando os dados mudam
-const ouvintesAtualizacao = [];
+// Arrays principais da aplicação mantidos exclusivamente na memória da página (Sem localStorage)
+let movimentacoes = [];
+let orcamentos = [];
 
 /**
- * Registra uma função para ser chamada sempre que houver alteração nos dados
- * @param {Function} callback 
+ * Semana 13: Inicializa os dados na memória da sessão
  */
-export function inscreverAtualizacao(callback) {
-  if (typeof callback === 'function') {
-    ouvintesAtualizacao.push(callback);
+function inicializarDadosEmMemoria() {
+  movimentacoes = [];
+  for (let i = 0; i < DADOS_INICIAIS.length; i++) {
+    movimentacoes.push(DADOS_INICIAIS[i]);
+  }
+
+  orcamentos = [];
+  for (let i = 0; i < ORCAMENTOS_INICIAIS.length; i++) {
+    orcamentos.push(ORCAMENTOS_INICIAIS[i]);
   }
 }
 
 /**
- * Notifica todos os ouvintes inscritos sobre alterações nos dados
+ * Retorna a lista atual de movimentações em memória
  */
-function notificarOuvintes() {
-  ouvintesAtualizacao.forEach(callback => callback());
+function obterMovimentacoes() {
+  return movimentacoes;
 }
 
 /**
- * Retorna uma cópia do array de movimentações em memória
- * @returns {Array}
+ * Retorna a lista atual de limites de orçamento em memória
  */
-export function obterMovimentacoes() {
-  return [...movimentacoes];
+function obterOrcamentos() {
+  return orcamentos;
 }
 
 /**
- * Adiciona uma nova movimentação ao array em memória
- * @param {Object} movimentacao 
- * @returns {Object} Movimentação inserida com ID único
+ * Semana 11 e 13: Adiciona uma nova movimentação ao array em memória, gera ID e atualiza a interface
  */
-export function adicionarMovimentacao(movimentacao) {
-  const novoId = movimentacoes.length > 0 
-    ? Math.max(...movimentacoes.map(m => m.id)) + 1 
-    : 1;
+function adicionarMovimentacao(novaMov) {
+  let maiorId = 0;
+  for (let i = 0; i < movimentacoes.length; i++) {
+    if (movimentacoes[i].id > maiorId) {
+      maiorId = movimentacoes[i].id;
+    }
+  }
 
-  const novaMov = {
-    id: novoId,
-    descricao: movimentacao.descricao.trim(),
-    valor: Number(movimentacao.valor),
-    tipo: movimentacao.tipo,
-    categoria: movimentacao.categoria,
-    data: movimentacao.data
+  const objetoMovimentacao = {
+    id: maiorId + 1,
+    descricao: novaMov.descricao.trim(),
+    valor: parseFloat(novaMov.valor),
+    tipo: novaMov.tipo,
+    categoria: novaMov.categoria,
+    data: novaMov.data
   };
 
-  movimentacoes.push(novaMov);
-  notificarOuvintes();
-  return novaMov;
+  movimentacoes.push(objetoMovimentacao);
+
+  // Atualiza todas as telas da aplicação
+  atualizarTodasAsTelas();
+  return objetoMovimentacao;
 }
 
 /**
- * Remove uma movimentação pelo seu ID
- * @param {number|string} id 
- * @returns {boolean} Retorna true se removeu com sucesso
+ * Semana 11, 12 e 13: Remove uma movimentação do array em memória pelo ID e atualiza a interface
  */
-export function removerMovimentacao(id) {
-  const indice = movimentacoes.findIndex(m => m.id === Number(id));
-  if (indice !== -1) {
-    movimentacoes.splice(indice, 1);
-    notificarOuvintes();
-    return true;
+function removerMovimentacao(id) {
+  const idParaRemover = parseInt(id, 10);
+  for (let i = 0; i < movimentacoes.length; i++) {
+    if (movimentacoes[i].id === idParaRemover) {
+      movimentacoes.splice(i, 1);
+      atualizarTodasAsTelas();
+      return true;
+    }
   }
   return false;
 }
 
 /**
- * Retorna a lista de limites de orçamento
- * @returns {Array}
+ * Semana 13: Atualiza o limite de uma categoria no array em memória
  */
-export function obterOrcamentos() {
-  return [...orcamentos];
-}
+function atualizarOrcamento(categoria, novoLimite) {
+  let encontrou = false;
+  for (let i = 0; i < orcamentos.length; i++) {
+    if (orcamentos[i].categoria.toLowerCase() === categoria.toLowerCase()) {
+      orcamentos[i].limite = parseFloat(novoLimite);
+      encontrou = true;
+      break;
+    }
+  }
 
-/**
- * Atualiza o limite de gastos de uma categoria específica
- * @param {string} categoria 
- * @param {number} novoLimite 
- */
-export function atualizarOrcamento(categoria, novoLimite) {
-  const orcamento = orcamentos.find(o => o.categoria.toLowerCase() === categoria.toLowerCase());
-  if (orcamento) {
-    orcamento.limite = Number(novoLimite);
-  } else {
+  if (!encontrou) {
     orcamentos.push({
-      categoria,
-      limite: Number(novoLimite),
-      icone: 'tag'
+      categoria: categoria,
+      limite: parseFloat(novoLimite)
     });
   }
-  notificarOuvintes();
+
+  atualizarTodasAsTelas();
 }
 
 /**
- * Calcula os totais de receitas, despesas, saldo e resultado
- * @param {Array} lista - Opcional. Usa todas as movimentações por padrão.
- * @returns {Object} { totalReceitas, totalDespesas, saldoDisponivel, resultadoMes, taxaEconomia }
+ * Semana 12 e 13: Calcula os totais de receitas, despesas, saldo e taxa de economia
+ * Utiliza estrutura for tradicional e operadores condicionais
  */
-export function calcularTotais(lista = movimentacoes) {
+function calcularTotais(lista) {
+  const listaParaCalcular = lista ? lista : movimentacoes;
   let totalReceitas = 0;
   let totalDespesas = 0;
 
-  lista.forEach(item => {
-    const valor = Number(item.valor) || 0;
+  for (let i = 0; i < listaParaCalcular.length; i++) {
+    const item = listaParaCalcular[i];
+    const valor = parseFloat(item.valor) || 0;
+
     if (item.tipo === 'receita') {
       totalReceitas += valor;
     } else if (item.tipo === 'despesa') {
       totalDespesas += valor;
     }
-  });
+  }
 
   const saldoDisponivel = totalReceitas - totalDespesas;
-  const resultadoMes = saldoDisponivel;
-  const taxaEconomia = totalReceitas > 0 
-    ? Math.max(0, ((totalReceitas - totalDespesas) / totalReceitas) * 100) 
-    : 0;
+  let taxaEconomia = 0;
+  if (totalReceitas > 0) {
+    taxaEconomia = ((totalReceitas - totalDespesas) / totalReceitas) * 100;
+    if (taxaEconomia < 0) {
+      taxaEconomia = 0;
+    }
+  }
 
   return {
-    totalReceitas,
-    totalDespesas,
-    saldoDisponivel,
-    resultadoMes,
-    taxaEconomia
+    totalReceitas: totalReceitas,
+    totalDespesas: totalDespesas,
+    saldoDisponivel: saldoDisponivel,
+    resultadoMes: saldoDisponivel,
+    taxaEconomia: taxaEconomia
   };
 }
 
 /**
- * Calcula o total gasto por categoria de despesa
- * @param {Array} lista - Opcional. Usa todas as movimentações por padrão.
- * @returns {Object} Mapa { 'Alimentação': 450.00, ... }
+ * Semana 13: Calcula o total de despesas agrupado por categoria
+ * Retorna um objeto com { 'Alimentação': 450, 'Moradia': 1100, ... }
  */
-export function calcularGastosPorCategoria(lista = movimentacoes) {
+function calcularGastosPorCategoria(lista) {
+  const listaParaCalcular = lista ? lista : movimentacoes;
   const totais = {};
 
-  CATEGORIAS_DESPESA.forEach(cat => {
+  // Inicializa cada categoria com 0
+  for (let i = 0; i < CATEGORIAS_DESPESA.length; i++) {
+    const cat = CATEGORIAS_DESPESA[i];
     totais[cat] = 0;
-  });
+  }
 
-  lista.forEach(item => {
+  // Soma os valores das despesas
+  for (let i = 0; i < listaParaCalcular.length; i++) {
+    const item = listaParaCalcular[i];
     if (item.tipo === 'despesa') {
-      const cat = item.categoria;
-      if (!totais[cat]) {
-        totais[cat] = 0;
+      if (!totais[item.categoria]) {
+        totais[item.categoria] = 0;
       }
-      totais[cat] += Number(item.valor) || 0;
+      totais[item.categoria] += parseFloat(item.valor) || 0;
     }
-  });
+  }
 
   return totais;
 }
 
 /**
- * Formata um número para o padrão de moeda brasileiro (R$ 0,00)
- * @param {number} valor 
- * @returns {string}
+ * Formata um número para moeda brasileira (R$ 0,00)
  */
-export function formatarMoeda(valor) {
-  const numero = Number(valor) || 0;
-  return new Intl.NumberFormat('pt-BR', {
+function formatarMoeda(valor) {
+  const numero = parseFloat(valor) || 0;
+  return numero.toLocaleString('pt-BR', {
     style: 'currency',
     currency: 'BRL'
-  }).format(numero);
+  });
 }
 
 /**
- * Formata uma data no formato YYYY-MM-DD para DD/MM/AAAA
- * @param {string} dataIso 
- * @returns {string}
+ * Formata data de 'AAAA-MM-DD' para 'DD/MM/AAAA'
  */
-export function formatarData(dataIso) {
+function formatarData(dataIso) {
   if (!dataIso) return '-';
   const partes = dataIso.split('-');
   if (partes.length === 3) {
-    const [ano, mes, dia] = partes;
-    return `${dia.padStart(2, '0')}/${mes.padStart(2, '0')}/${ano}`;
+    return partes[2] + '/' + partes[1] + '/' + partes[0];
   }
   return dataIso;
 }
+
+/**
+ * Função central que notifica e atualiza a interface visual em todos os módulos
+ */
+function atualizarTodasAsTelas() {
+  if (typeof renderizarDashboard === 'function') {
+    renderizarDashboard();
+  }
+  if (typeof renderizarTabelaMovimentacoes === 'function') {
+    renderizarTabelaMovimentacoes();
+  }
+  if (typeof renderizarPlanejamento === 'function') {
+    renderizarPlanejamento();
+  }
+  if (typeof renderizarRelatorios === 'function') {
+    renderizarRelatorios();
+  }
+}
+
+// Inicializa os dados em memória ao carregar o script
+inicializarDadosEmMemoria();

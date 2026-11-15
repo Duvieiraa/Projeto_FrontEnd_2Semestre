@@ -63,6 +63,14 @@
     font-size: 0.72rem;
   }
 
+  .badge-perfil-header .nome-header-usuario {
+    display: none;
+  }
+
+  .badge-perfil-header {
+    padding: 2px;
+  }
+
   .conteudo-secoes {
     padding: 16px;
   }

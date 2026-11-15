@@ -1,43 +1,42 @@
 /**
  * validacoes.js - Finanças Pessoais
- * Módulo responsável pela validação dos formulários com JavaScript nativo.
- * Apresenta mensagens de erro claras e amigáveis diretamente abaixo dos campos com problemas.
+ * Módulo de Validação de Formulários com Tratamento de Eventos e Manipulação do DOM
+ * 
+ * Conteúdos aplicados do semestre:
+ * - Semana 9: Variáveis e tipos de dados.
+ * - Semana 11: Manipulação do DOM (querySelector, classList.add, classList.remove, textContent).
+ * - Semana 12: Operadores lógicos (&&, ||, !, >, <, ===) e estruturas condicionais (if / else).
  */
-
-import { CATEGORIAS_RECEITA, CATEGORIAS_DESPESA } from './data.js';
 
 /**
- * Exibe uma mensagem de erro abaixo do campo informado
- * @param {HTMLInputElement|HTMLSelectElement} inputElement 
- * @param {string} mensagem 
+ * Semana 11: Exibe a mensagem de erro no elemento visual abaixo do campo inválido
  */
-export function exibirErro(inputElement, mensagem) {
+function exibirMensagemErro(inputElement, mensagem) {
   if (!inputElement) return;
 
-  // Adiciona a classe de destaque de erro no input
+  // Destaca a borda do input com a classe de erro
   inputElement.classList.add('input-erro');
   inputElement.setAttribute('aria-invalid', 'true');
 
-  // Encontra ou cria o container da mensagem de erro
+  // Encontra o container do grupo do formulário (.form-grupo)
   const container = inputElement.closest('.form-grupo') || inputElement.parentElement;
   if (!container) return;
 
-  let mensagemElemento = container.querySelector('.mensagem-erro');
-  if (!mensagemElemento) {
-    mensagemElemento = document.createElement('span');
-    mensagemElemento.className = 'mensagem-erro';
-    container.append(mensagemElemento);
+  let elementoErro = container.querySelector('.mensagem-erro');
+  if (!elementoErro) {
+    elementoErro = document.createElement('span');
+    elementoErro.className = 'mensagem-erro';
+    container.appendChild(elementoErro);
   }
 
-  mensagemElemento.textContent = mensagem;
-  mensagemElemento.style.display = 'block';
+  elementoErro.textContent = mensagem;
+  elementoErro.style.display = 'block';
 }
 
 /**
- * Remove o erro visual de um campo específico
- * @param {HTMLInputElement|HTMLSelectElement} inputElement 
+ * Semana 11: Limpa o erro visual de um campo específico quando o usuário digita
  */
-export function limparErro(inputElement) {
+function limparMensagemErro(inputElement) {
   if (!inputElement) return;
 
   inputElement.classList.remove('input-erro');
@@ -45,109 +44,114 @@ export function limparErro(inputElement) {
 
   const container = inputElement.closest('.form-grupo') || inputElement.parentElement;
   if (container) {
-    const mensagemElemento = container.querySelector('.mensagem-erro');
-    if (mensagemElemento) {
-      mensagemElemento.textContent = '';
-      mensagemElemento.style.display = 'none';
+    const elementoErro = container.querySelector('.mensagem-erro');
+    if (elementoErro) {
+      elementoErro.textContent = '';
+      elementoErro.style.display = 'none';
     }
   }
 }
 
 /**
- * Remove todas as mensagens e estilos de erro de um formulário
- * @param {HTMLFormElement} formElement 
+ * Limpa todos os erros de um formulário
  */
-export function limparTodosErros(formElement) {
+function limparTodosOsErros(formElement) {
   if (!formElement) return;
 
   const camposComErro = formElement.querySelectorAll('.input-erro');
-  camposComErro.forEach(campo => {
-    campo.classList.remove('input-erro');
-    campo.removeAttribute('aria-invalid');
-  });
+  for (let i = 0; i < camposComErro.length; i++) {
+    camposComErro[i].classList.remove('input-erro');
+    camposComErro[i].removeAttribute('aria-invalid');
+  }
 
   const mensagens = formElement.querySelectorAll('.mensagem-erro');
-  mensagens.forEach(msg => {
-    msg.textContent = '';
-    msg.style.display = 'none';
-  });
+  for (let i = 0; i < mensagens.length; i++) {
+    mensagens[i].textContent = '';
+    mensagens[i].style.display = 'none';
+  }
 }
 
 /**
- * Valida os dados de cadastro de uma nova movimentação
- * @param {Object} dados - Objeto contendo { descricao, valor, tipo, categoria, data }
- * @param {HTMLFormElement} formElement - Elemento do formulário no DOM para exibir os erros
- * @returns {boolean} Retorna true se todos os campos forem válidos
+ * Semana 12: Valida todos os campos do formulário de movimentação
+ * Verifica campos obrigatórios, valor numérico > 0, categoria e data válida
  */
-export function validarFormularioMovimentacao(dados, formElement) {
+function validarFormularioMovimentacao(dados, formElement) {
   let formularioValido = true;
-  limparTodosErros(formElement);
+  limparTodosOsErros(formElement);
 
-  // 1. Validação da Descrição
   const inputDescricao = formElement.querySelector('[name="descricao"]');
+  const inputValor = formElement.querySelector('[name="valor"]');
+  const selectTipo = formElement.querySelector('[name="tipo"]');
+  const selectCategoria = formElement.querySelector('[name="categoria"]');
+  const inputData = formElement.querySelector('[name="data"]');
+
+  // 1. Validação da Descrição (Semana 12: operadores lógicos e if)
   if (!dados.descricao || dados.descricao.trim().length === 0) {
-    exibirErro(inputDescricao, 'A descrição é obrigatória.');
+    exibirMensagemErro(inputDescricao, 'A descrição é obrigatória.');
     formularioValido = false;
   } else if (dados.descricao.trim().length < 3) {
-    exibirErro(inputDescricao, 'A descrição deve ter pelo menos 3 caracteres.');
+    exibirMensagemErro(inputDescricao, 'A descrição deve ter pelo menos 3 caracteres.');
     formularioValido = false;
   }
 
   // 2. Validação do Valor
-  const inputValor = formElement.querySelector('[name="valor"]');
-  const valorNumerico = Number(dados.valor);
+  const valorNumerico = parseFloat(dados.valor);
   if (!dados.valor || isNaN(valorNumerico)) {
-    exibirErro(inputValor, 'Informe um valor numérico válido.');
+    exibirMensagemErro(inputValor, 'Informe um valor numérico válido.');
     formularioValido = false;
   } else if (valorNumerico <= 0) {
-    exibirErro(inputValor, 'O valor deve ser maior do que zero (R$ 0,00).');
+    exibirMensagemErro(inputValor, 'O valor deve ser maior do que zero (R$ 0,00).');
     formularioValido = false;
   }
 
   // 3. Validação do Tipo
-  const selectTipo = formElement.querySelector('[name="tipo"]');
   if (!dados.tipo || (dados.tipo !== 'receita' && dados.tipo !== 'despesa')) {
-    exibirErro(selectTipo, 'Selecione o tipo da movimentação (Receita ou Despesa).');
+    exibirMensagemErro(selectTipo, 'Selecione o tipo (Receita ou Despesa).');
     formularioValido = false;
   }
 
   // 4. Validação da Categoria
-  const selectCategoria = formElement.querySelector('[name="categoria"]');
-  const categoriasPermitidas = dados.tipo === 'receita' ? CATEGORIAS_RECEITA : CATEGORIAS_DESPESA;
   if (!dados.categoria || dados.categoria.trim() === '') {
-    exibirErro(selectCategoria, 'Selecione uma categoria válida.');
+    exibirMensagemErro(selectCategoria, 'Selecione uma categoria.');
     formularioValido = false;
-  } else if (!categoriasPermitidas.includes(dados.categoria)) {
-    exibirErro(selectCategoria, 'Categoria inválida para o tipo selecionado.');
-    formularioValido = false;
+  } else {
+    // Verifica se a categoria pertence à lista permitida
+    const categoriasPermitidas = dados.tipo === 'receita' ? CATEGORIAS_RECEITA : CATEGORIAS_DESPESA;
+    let categoriaExiste = false;
+    for (let i = 0; i < categoriasPermitidas.length; i++) {
+      if (categoriasPermitidas[i] === dados.categoria) {
+        categoriaExiste = true;
+        break;
+      }
+    }
+    if (!categoriaExiste) {
+      exibirMensagemErro(selectCategoria, 'Categoria inválida para este tipo.');
+      formularioValido = false;
+    }
   }
 
   // 5. Validação da Data
-  const inputData = formElement.querySelector('[name="data"]');
   if (!dados.data || dados.data.trim() === '') {
-    exibirErro(inputData, 'A data da movimentação é obrigatória.');
+    exibirMensagemErro(inputData, 'A data é obrigatória.');
     formularioValido = false;
-  } else {
-    const dataObj = new Date(dados.data);
-    if (isNaN(dataObj.getTime())) {
-      exibirErro(inputData, 'Informe uma data válida.');
-      formularioValido = false;
-    }
   }
 
   return formularioValido;
 }
 
 /**
- * Atribui ouvintes de evento 'input' e 'change' para limpar os erros em tempo real
- * @param {HTMLFormElement} formElement 
+ * Semana 11: Adiciona eventos de input e change para remover mensagens de erro assim que o usuário corrige o campo
  */
-export function configurarLimpezaErrosEmTempoReal(formElement) {
+function configurarLimpezaErrosEmTempoReal(formElement) {
   if (!formElement) return;
 
-  const inputs = formElement.querySelectorAll('input, select, textarea');
-  inputs.forEach(input => {
-    input.addEventListener('input', () => limparErro(input));
-    input.addEventListener('change', () => limparErro(input));
-  });
+  const inputs = formElement.querySelectorAll('input, select');
+  for (let i = 0; i < inputs.length; i++) {
+    inputs[i].addEventListener('input', function() {
+      limparMensagemErro(inputs[i]);
+    });
+    inputs[i].addEventListener('change', function() {
+      limparMensagemErro(inputs[i]);
+    });
+  }
 }
