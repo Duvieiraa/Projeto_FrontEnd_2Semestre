@@ -1,14 +1,3 @@
-/**
- * movimentacoes.js - Finanças Pessoais
- * Módulo de Gerenciamento de Movimentações: Cadastro, Listagem, Filtros e Exclusão
- * 
- * Conteúdos aplicados do semestre:
- * - Semana 9: Variáveis e tipos de dados.
- * - Semana 11: Manipulação do DOM (createElement, appendChild, textContent, addEventListener).
- * - Semana 12: Operadores lógicos (&&, ||, ===) e estruturas condicionais (if / else).
- * - Semana 13: Estruturas de repetição (for), Arrays de objetos e persistência.
- */
-
 // Objeto de estado dos filtros ativos
 const estadoFiltros = {
   busca: '',

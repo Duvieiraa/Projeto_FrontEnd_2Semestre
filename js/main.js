@@ -1,14 +1,3 @@
-/**
- * main.js - Finanças Pessoais
- * Módulo Orquestrador da Aplicação e Controle da Navegação SPA
- * 
- * Conteúdos aplicados do semestre:
- * - Semana 9: Variáveis (let, const), tipos de dados.
- * - Semana 11: Manipulação do DOM (getElementById, querySelectorAll, classList, addEventListener).
- * - Semana 12: Operadores lógicos e estruturas condicionais (if / else).
- * - Semana 13: Estruturas de repetição (for) e integração de módulos.
- */
-
 // Executa a inicialização assim que o HTML for completamente carregado no navegador
 document.addEventListener('DOMContentLoaded', function() {
   // 1. Configura a saudação dinâmica (Arnaldo) e data atual

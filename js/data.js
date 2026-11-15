@@ -1,14 +1,4 @@
-/**
- * data.js - Finanças Pessoais
- * Módulo de Gerenciamento de Dados em Memória (Sem localStorage)
- * 
- * Conteúdos aplicados do semestre:
- * - Semana 9: Variáveis (let, const), tipos de dados primitivos.
- * - Semana 12: Operadores lógicos e estruturas condicionais (if / else).
- * - Semana 13: Estruturas de repetição (for, for...of), Arrays e Objetos em memória.
- */
-
-// Categorias padrão de Receitas e Despesas (Semana 13 - Arrays)
+// Categorias padrão de Receitas e Despesas
 const CATEGORIAS_RECEITA = [
   'Salário',
   'Renda extra',

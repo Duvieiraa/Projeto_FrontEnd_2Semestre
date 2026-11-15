@@ -1,16 +1,5 @@
 /**
- * planejamento.js - Finanças Pessoais
- * Módulo de Planejamento de Gastos e Limites por Categoria com Alertas Visuais
- * 
- * Conteúdos aplicados do semestre:
- * - Semana 9: Variáveis (let, const), tipos de dados.
- * - Semana 11: Manipulação do DOM (createElement, appendChild, textContent).
- * - Semana 12: Operadores lógicos e estruturas condicionais (if / else if / else para alertas de 80% e 100%).
- * - Semana 13: Estruturas de repetição (for), Arrays de Objetos mantidos em memória.
- */
-
-/**
- * Semana 11 e 13: Renderiza o resumo do planejamento orçamentário
+ * Renderiza o resumo do planejamento orçamentário
  */
 function renderizarResumoPlanejamento() {
   const container = document.getElementById('resumo-planejamento');

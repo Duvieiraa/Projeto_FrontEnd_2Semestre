@@ -1,14 +1,3 @@
-/**
- * relatorios.js - Finanças Pessoais
- * Módulo de Relatórios Financeiros Analíticos e Filtros por Período
- * 
- * Conteúdos aplicados do semestre:
- * - Semana 9: Variáveis (let, const), tipos de dados.
- * - Semana 11: Manipulação do DOM (getElementById, createElement, appendChild, textContent).
- * - Semana 12: Operadores lógicos (&&, ||, ===) e estruturas condicionais (if / else).
- * - Semana 13: Estruturas de repetição (for), Arrays de Objetos e ordenação.
- */
-
 let periodoSelecionado = 'todos';
 
 /**

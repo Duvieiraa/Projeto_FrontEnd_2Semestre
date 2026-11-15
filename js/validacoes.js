@@ -1,15 +1,5 @@
 /**
- * validacoes.js - Finanças Pessoais
- * Módulo de Validação de Formulários com Tratamento de Eventos e Manipulação do DOM
- * 
- * Conteúdos aplicados do semestre:
- * - Semana 9: Variáveis e tipos de dados.
- * - Semana 11: Manipulação do DOM (querySelector, classList.add, classList.remove, textContent).
- * - Semana 12: Operadores lógicos (&&, ||, !, >, <, ===) e estruturas condicionais (if / else).
- */
-
-/**
- * Semana 11: Exibe a mensagem de erro no elemento visual abaixo do campo inválido
+ * Exibe a mensagem de erro no elemento visual abaixo do campo inválido
  */
 function exibirMensagemErro(inputElement, mensagem) {
   if (!inputElement) return;

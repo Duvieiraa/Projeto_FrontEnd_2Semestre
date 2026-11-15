@@ -1,14 +1,3 @@
-/**
- * dashboard.js - Finanças Pessoais
- * Módulo de Renderização do Dashboard (Visão Geral)
- * 
- * Conteúdos aplicados do semestre:
- * - Semana 9: Variáveis (let, const), tipos de dados.
- * - Semana 11: Manipulação do DOM (getElementById, textContent, innerHTML, classList).
- * - Semana 12: Operadores lógicos e estruturas condicionais (if / else).
- * - Semana 13: Estruturas de repetição (for), Arrays e Objetos.
- */
-
 // Paleta de cores para identificar visualmente cada categoria
 const CORES_CATEGORIAS_DASH = [
   '#0f4c3a',
