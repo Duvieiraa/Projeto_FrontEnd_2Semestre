@@ -67,6 +67,4 @@ Você pode abrir o projeto de duas formas simples:
 ---
 
 ## Responsável pelo Projeto
-
-| Nome | Função Principal |
-| **Arnaldo** | Estrutura HTML e Telas |
+**José Arnaldo Costa de Araújo Vieira** 
